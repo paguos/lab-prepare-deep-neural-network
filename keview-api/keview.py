@@ -26,9 +26,14 @@ class DenseLayer(Layer):
         we = layer.get_weights()
         we[0] = np.einsum('kl->lk', we[0])
         self.__neurons = [Neuron(we[0][i], we[1][i]) for i in range(len(we[0]))]
+        self.__activation_function = layer.get_config()["activation"]
+        print(self.__activation_function)
 
     def get_neutons(self):
         return self.__neurons
+
+    def get_activation_function(self):
+        return self.__activation_function
 
 
 class ConvolutionLayer(Layer):
