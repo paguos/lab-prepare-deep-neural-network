@@ -23,9 +23,9 @@ class DenseLayer(Layer):
     def __init__(self, layer: keras.layers.Dense):
         Layer.__init__(self, layer)
 
-        we = layer.get_weights()
-        we[0] = np.einsum('kl->lk', we[0])
-        self.__neurons = [Neuron(we[0][i], we[1][i]) for i in range(len(we[0]))]
+        weights = layer.get_weights()
+        weights = np.einsum('kl->lk', weights[0])
+        self.__neurons = [Neuron(x, y) for i in zip(weights[0], weights[1])]
         self.__activation_function = layer.get_config()["activation"]
         print(self.__activation_function)
 
@@ -40,9 +40,9 @@ class ConvolutionLayer(Layer):
     def __init__(self, layer: keras.layers.Dense):
         Layer.__init__(self, layer)
 
-        we = layer.get_weights()
-        we[0] = np.einsum('klij->jikl', layer.get_weights()[0])
-        self.__featuremaps = [FeatureMap(we[0][i], we[1][i]) for i in range(len(we[0]))]
+        weights = layer.get_weights()
+        weights[0] = np.einsum('klij->jikl', layer.get_weights()[0])
+        self.__featuremaps = [FeatureMap(x, y) for i in zip(weights[0], weights[1])]
 
     def get_featuremaps(self):
         return self.__featuremaps
@@ -66,9 +66,9 @@ class FeatureMap:
 
 
 class Neuron:
-    def __init__(self, weights: [], input_bias: np.float):
+    def __init__(self, weights: [], bias: np.float):
         self.__weights = weights
-        self.__bias = input_bias
+        self.__bias = bias
 
     def get_weights(self):
         return self.__weights
