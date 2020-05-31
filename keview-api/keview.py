@@ -1,8 +1,10 @@
-import keras
+from tensorflow import keras
 import numpy as np
+from keras import backend as K
+from abc import ABC, abstractmethod
 
 
-class Layer:
+class Layer(ABC):
     def __init__(self, layer: keras.layers.Layer):
         self.__keras_layer = layer
         self.__input_shape = layer.input_shape
@@ -18,6 +20,10 @@ class Layer:
     def get_keras_layer(self):
         return self.__keras_layer
 
+    #@abstractmethod
+    def _set_output(self,output):
+        pass
+
 
 class DenseLayer(Layer):
     def __init__(self, layer: keras.layers.Dense):
@@ -29,13 +35,15 @@ class DenseLayer(Layer):
         self.__activation_function = layer.get_config()["activation"]
         print(self.__activation_function)
 
-    def get_neutons(self):
+    def get_neurons(self):
         return self.__neurons
 
     def get_activation_function(self):
         return self.__activation_function
 
-
+    def _set_output(self,layer_output):
+       for neuron,neuron_output in zip(self.__neurons,layer_output[0]):
+            neuron._set_output(neuron_output);
 class ConvolutionLayer(Layer):
     def __init__(self, layer: keras.layers.Dense):
         Layer.__init__(self, layer)
@@ -69,12 +77,17 @@ class Neuron:
     def __init__(self, weights: [], bias: np.float):
         self.__weights = weights
         self.__bias = bias
-
+        self.__output = None
     def get_weights(self):
         return self.__weights
 
     def get_bias(self):
         return self.__bias
+    def _set_output(self,output):
+        self.__output=output
+
+    def get_output(self):
+        return self.__output
 
 
 class Model:
@@ -82,12 +95,20 @@ class Model:
     def __init__(self, model: keras.Model):
         self.__model = model
         self.__layers = []
+        self.__run_function=K.function([self.__model.input],[layer.output for layer in self.__model.layers])
         for layer in model.layers:
             self.__layers.append(self.__create_layer(layer))
+
+    def get_kera_model(self):
+        return self.__model
 
     def get_layers(self) -> [Layer]:
         return self.__layers
 
+    def run(self,single_element):
+        outputs=self.__run_function(np.asarray([single_element]))
+        for layer, layer_output in zip(self.__layers,outputs):
+            layer._set_output(layer_output)
     def __create_layer(self, layer):
         if isinstance(layer, keras.layers.Dense):
             return DenseLayer(layer)
