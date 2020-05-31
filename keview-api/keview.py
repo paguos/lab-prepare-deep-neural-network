@@ -30,10 +30,9 @@ class DenseLayer(Layer):
         Layer.__init__(self, layer)
 
         weights = layer.get_weights()
-        weights = np.einsum('kl->lk', weights[0])
+        weights[0] = np.einsum('kl->lk', weights[0])
         self.__neurons = [Neuron(x, y) for x,y in zip(weights[0], weights[1])]
         self.__activation_function = layer.get_config()["activation"]
-        print(self.__activation_function)
 
     def get_neurons(self):
         return self.__neurons
