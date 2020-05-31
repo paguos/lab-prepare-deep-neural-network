@@ -25,7 +25,7 @@ class DenseLayer(Layer):
 
         weights = layer.get_weights()
         weights = np.einsum('kl->lk', weights[0])
-        self.__neurons = [Neuron(x, y) for i in zip(weights[0], weights[1])]
+        self.__neurons = [Neuron(x, y) for x,y in zip(weights[0], weights[1])]
         self.__activation_function = layer.get_config()["activation"]
         print(self.__activation_function)
 
@@ -42,7 +42,7 @@ class ConvolutionLayer(Layer):
 
         weights = layer.get_weights()
         weights[0] = np.einsum('klij->jikl', layer.get_weights()[0])
-        self.__featuremaps = [FeatureMap(x, y) for i in zip(weights[0], weights[1])]
+        self.__featuremaps = [FeatureMap(x, y) for x,y in zip(weights[0], weights[1])]
 
     def get_featuremaps(self):
         return self.__featuremaps
