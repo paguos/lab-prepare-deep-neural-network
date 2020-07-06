@@ -1,22 +1,22 @@
-import keras
+from tensorflow.python import keras
 import keview
-test = keras.Sequential()
-test.add(keras.layers.Conv2D(filters=8, kernel_size=(5, 5), input_shape=(28, 28, 3)))
-test.add(keras.layers.Flatten())
-test.add(keras.layers.Dense(5,activation="sigmoid"))
-test.add(keras.layers.Dense(6,activation="sigmoid"))
+import numpy as np
+import matplotlib.pyplot as plt
+from keras import backend as K
+model=keras.models.load_model("model.h5")
+data = keras.datasets.mnist
+(train_images_temp, train_labels), (test_images_temp, test_labels) = data.load_data()
+train_images = train_images_temp / 255.0
+print(np.shape(train_images))
+test_images = test_images_temp / 255.0
+train_images = train_images.reshape(60000,28,28,1)
+test_images = test_images.reshape(10000,28,28,1)
 
-print(test.summary())
+print(model.summary())
+t = keview.Model(model)
+element=np.zeros((28,28,3),np.float32)
+#plt.imshow(test_images_temp[0])
+t.run(test_images[0])
 
-
-t = keview.Model(test)
-
-
-
-for i in range(len(t.get_layers())):
-    print("layer ", i, " input shape: ", t.get_layers()[i].get_input_shape())
-    print("layer ", i, " output shape: ", t.get_layers()[i].get_output_shape())
-    print("")
-    if(isinstance(t.get_layers()[i],keview.DenseLayer)):
-        f=keras.activations.get(t.get_layers()[i].get_activation_function())
-        print(f(0.5))
+plt.imshow(t.get_layers()[3].get_featuremaps()[-1].get_output(),cmap="binary")
+plt.show()
