@@ -2,6 +2,6 @@ docker:
 	docker build . -t keview-api
 	docker run keview-api
 
-local:
-	pipenv install
-	pipenv run python test.py
+example:
+	pipenv install --skip-lock
+	PYTHONPATH=./ pipenv run python examples/example.py

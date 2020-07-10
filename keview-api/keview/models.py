@@ -1,5 +1,6 @@
-from tensorflow.python import keras
 import numpy as np
+
+from tensorflow.python import keras
 from abc import ABC, abstractmethod
 
 
@@ -30,7 +31,8 @@ class DenseLayer(Layer):
 
         weights = layer.get_weights()
         weights[0] = np.einsum('kl->lk', weights[0])
-        self.__neurons = [self.Neuron(x, y) for x, y in zip(weights[0], weights[1])]
+        self.__neurons = [self.Neuron(x, y)
+                          for x, y in zip(weights[0], weights[1])]
         self.__activation_function = layer.get_config()["activation"]
 
     def get_neurons(self):
@@ -69,13 +71,15 @@ class ConvolutionLayer(Layer):
 
         weights = layer.get_weights()
         weights[0] = np.einsum('klij->jikl', layer.get_weights()[0])
-        self.__featuremaps = [self.FeatureMap(x, y) for x, y in zip(weights[0], weights[1])]
+        self.__featuremaps = [self.FeatureMap(
+            x, y) for x, y in zip(weights[0], weights[1])]
 
     def get_featuremaps(self):
         return self.__featuremaps
 
     def _set_output(self, layer_output):
-        layer_output = np.einsum('abc->cab', np.reshape(layer_output, np.shape(layer_output)[1:]))
+        layer_output = np.einsum(
+            'abc->cab', np.reshape(layer_output, np.shape(layer_output)[1:]))
         for featuremap, featuremap_output in zip(self.__featuremaps, layer_output):
             # print(np.shape(featuremap_output))
             featuremap._set_output(featuremap_output)
@@ -113,13 +117,15 @@ class BatchNormalizationLayer(Layer):
     def __init__(self, layer: keras.layers.BatchNormalization):
         Layer.__init__(self, layer)
         weights = np.einsum('ab->ba', layer.get_weights())
-        self.__normalization_diminsions = [self.NormalizationDimension(w) for w in weights]
+        self.__normalization_diminsions = [
+            self.NormalizationDimension(w) for w in weights]
 
     def get_normalization_dimensions(self):
         return self.__normalization_diminsions
 
     def _set_output(self, output):
-        output = np.einsum('abc->cab', np.reshape(output, np.shape(output)[1:]))
+        output = np.einsum(
+            'abc->cab', np.reshape(output, np.shape(output)[1:]))
         for dimension, dimension_output in zip(self.__normalization_diminsions, output):
             dimension._set_output(dimension_output)
 
@@ -154,13 +160,15 @@ class MaxPoolingLayer(Layer):
 
     def __init__(self, layer: keras.layers.BatchNormalization):
         Layer.__init__(self, layer)
-        self._max_pooling_dimensions = [self.MaxPoolingDimension() for i in range(layer.input_shape[-1])]
+        self._max_pooling_dimensions = [
+            self.MaxPoolingDimension() for i in range(layer.input_shape[-1])]
 
     def get_max_pooling_dimensions(self):
         return self._max_pooling_dimensions
 
     def _set_output(self, output):
-        output = np.einsum('abc->cab', np.reshape(output, np.shape(output)[1:]))
+        output = np.einsum(
+            'abc->cab', np.reshape(output, np.shape(output)[1:]))
         for dimension, dimension_output in zip(self._max_pooling_dimensions, output):
             dimension._set_output(dimension_output)
 
@@ -175,7 +183,7 @@ class MaxPoolingLayer(Layer):
             return self.__output
 
 
-class Model:
+class KerasModel:
 
     def __init__(self, model: keras.Model):
         self.__model = model

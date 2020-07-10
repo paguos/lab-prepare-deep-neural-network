@@ -1,12 +1,13 @@
-import keview
 import numpy as np
 import matplotlib.pyplot as plt
 
 from tensorflow.python import keras
 from loguru import logger
 
+from keview.models import KerasModel
+
 logger.info("Loading model ...")
-model = keras.models.load_model("test.h5")
+model = keras.models.load_model("examples/test.h5")
 logger.info("Loading dataset ....")
 data = keras.datasets.mnist
 (train_images_temp, train_labels), (test_images_temp, test_labels) = data.load_data()
@@ -19,7 +20,7 @@ test_images = test_images.reshape(10000, 28, 28, 1)
 image = 23
 
 logger.info(f"Model Summary: {model.summary()}")
-t = keview.Model(model)
+t = KerasModel(model)
 element = np.zeros((28, 28, 3), np.float32)
 plt.imshow(test_images_temp[image], cmap='binary')
 t.run(test_images[image])
