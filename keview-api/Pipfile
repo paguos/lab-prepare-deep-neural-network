@@ -13,6 +13,8 @@ tensorflow = "*"
 loguru = "*"
 matplotlib = "*"
 autopep8 = "*"
+fastapi = "*"
+uvicorn = "*"
 
 [requires]
 python_version = "3.8"

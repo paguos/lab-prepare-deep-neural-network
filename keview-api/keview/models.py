@@ -1,3 +1,4 @@
+import json
 import numpy as np
 
 from tensorflow.python import keras
@@ -11,6 +12,10 @@ class Layer(ABC):
         self.__output_shape = layer.output_shape
         self.__shape = layer.output_shape
 
+    @property
+    def name(self):
+        return self.__class__.__name__
+
     def get_input_shape(self):
         return self.__input_shape
 
@@ -23,6 +28,17 @@ class Layer(ABC):
     @abstractmethod
     def _set_output(self, output):
         pass
+
+    @abstractmethod
+    def get_components():
+        pass
+
+    def toJSON(self):
+        return {
+            "name":  self.name,
+            "input_shape":  self.__input_shape,
+            "output_shape": self.__output_shape,
+        }
 
 
 class DenseLayer(Layer):
@@ -40,6 +56,9 @@ class DenseLayer(Layer):
 
     def get_activation_function(self):
         return self.__activation_function
+
+    def get_components(self):
+        return self.__neurons
 
     def _set_output(self, layer_output):
         for neuron, neuron_output in zip(self.__neurons, layer_output[0]):
@@ -63,6 +82,13 @@ class DenseLayer(Layer):
         def get_output(self):
             return self.__output
 
+        def toJSON(self):
+            return {
+                "weights": self.__weights,
+                "bias": self.__bias,
+                "output": self.__output,
+            }
+
 
 class ConvolutionLayer(Layer):
 
@@ -75,6 +101,9 @@ class ConvolutionLayer(Layer):
             x, y) for x, y in zip(weights[0], weights[1])]
 
     def get_featuremaps(self):
+        return self.__featuremaps
+
+    def get_components(self):
         return self.__featuremaps
 
     def _set_output(self, layer_output):
@@ -102,6 +131,11 @@ class ConvolutionLayer(Layer):
         def get_output(self):
             return self.__output
 
+        def toJSON(self):
+            return json.dumps(
+                self, default=lambda o: o.__dict__, sort_keys=True, indent=4
+            )
+
 
 class FlattenLayer(Layer):
     def __init__(self, layer: keras.layers.Flatten):
@@ -110,6 +144,9 @@ class FlattenLayer(Layer):
 
     def _set_output(self, output):
         self.__output = output[0]
+
+    def get_components(self):
+        return None
 
 
 class BatchNormalizationLayer(Layer):
@@ -121,6 +158,9 @@ class BatchNormalizationLayer(Layer):
             self.NormalizationDimension(w) for w in weights]
 
     def get_normalization_dimensions(self):
+        return self.__normalization_diminsions
+
+    def get_components(self):
         return self.__normalization_diminsions
 
     def _set_output(self, output):
@@ -155,6 +195,11 @@ class BatchNormalizationLayer(Layer):
         def get_output(self):
             return self.__output
 
+        def toJSON(self):
+            return json.dumps(
+                self, default=lambda o: o.__dict__, sort_keys=True, indent=4
+            )
+
 
 class MaxPoolingLayer(Layer):
 
@@ -164,6 +209,9 @@ class MaxPoolingLayer(Layer):
             self.MaxPoolingDimension() for i in range(layer.input_shape[-1])]
 
     def get_max_pooling_dimensions(self):
+        return self._max_pooling_dimensions
+
+    def get_components(self):
         return self._max_pooling_dimensions
 
     def _set_output(self, output):
@@ -181,6 +229,11 @@ class MaxPoolingLayer(Layer):
 
         def get_output(self):
             return self.__output
+
+        def toJSON(self):
+            return json.dumps(
+                self, default=lambda o: o.__dict__, sort_keys=True, indent=4
+            )
 
 
 class KerasModel:
