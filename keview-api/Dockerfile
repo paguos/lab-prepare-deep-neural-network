@@ -1,10 +1,10 @@
-FROM python:3.8.2-slim-buster
+FROM python:3.8.3-slim-buster
 
-RUN pip install pipenv==2018.11.26
+RUN pip install pipenv
 
 WORKDIR keview-api
 COPY . .
 
-RUN pipenv install --system --dev
+RUN pipenv install --system --skip-lock
 
-CMD ["python", "test.py"]
+CMD ["uvicorn", "keview.api:app", "--host", "0.0.0.0"]
