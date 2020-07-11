@@ -11,7 +11,7 @@
 To run locally:
 
 ```sh
-make local
+make run
 ```
 
 To run with docker:
