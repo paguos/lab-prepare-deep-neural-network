@@ -1,6 +1,10 @@
-from fastapi import FastAPI, HTTPException
-from loguru import logger
+from PIL import Image
+import io
 
+from fastapi import FastAPI, HTTPException
+from fastapi import File, UploadFile
+from keras.preprocessing.image import img_to_array
+from loguru import logger
 from tensorflow.python import keras
 
 from keview.models import KerasModel, Layer
@@ -26,7 +30,7 @@ async def layers():
         layer_data = layer.toJSON()
         layer_data["id"] = index
         layers_data.append(layer_data)
-        index = index + 1
+        index += 1
 
     return {"layers": layers_data}
 
@@ -58,6 +62,16 @@ async def outputs(layer_id):
     layer = fetch_layer(keras_model, layer_id)
     outputs = [c.toJSON()["output"] for c in layer.get_components()]
     return NumpyEncoder.encodeJSON(outputs)
+
+
+@app.post("/keview/v1alpha/test/")
+async def test_model(test_image: UploadFile = File(...)):
+    contents = test_image.file.read()
+    image = Image.open(io.BytesIO(contents))
+    image = img_to_array(image)
+    # TODO: Fix image format
+    keras_model.run(image)
+    return {"filename": test_image.filename}
 
 
 def fetch_layer(model: KerasModel, layer_index):
