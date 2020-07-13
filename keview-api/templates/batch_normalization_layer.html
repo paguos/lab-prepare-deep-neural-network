@@ -3,8 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <title>Batch Normalization Layyer</title>
+    <link href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet">
 </head>
 <body>
     <h1>Batch Normalization Layer</h1>
+    <h4> You've selected the Batch Normalization Layer.</h4>
+    <p> The basic idea behind batch normalization is to limit covariate shift by normalizing the activations of each layer (transforming the inputs to be mean 0 and unit variance). This, supposedly, allows each layer to learn on a more stable distribution of inputs, and would thus accelerate the training of the network</p>
+    <hr>
+    <p> Output: {{ output }}</p>
+    <p> Beta: {{ beta }}</p>
+    <p> Gamma: {{ gamma }}</p>
+    <p> Mean: {{ mean }}</p>
+    <p> Variance: {{ variance }}</p>
 </body>
 </html>

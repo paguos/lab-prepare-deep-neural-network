@@ -2,9 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Max Pooling Layer</title>
+    <title>Max Pooling Layer</title
+    <link href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet">
 </head>
 <body>
     <h1>Max Pooling Layer</h1>
+    <h4> You've selected the a Max Pooling Layer.</h4>
+    <p> The function of the pooling layer is to progressively reduce the spatial size of the representation and reduce the amount of parameters and computation in the network. The Pooling layer operates on each feature map independently.</p>
+    <hr>
+    <p> Output: {{ output }}</p>
 </body>
 </html>
