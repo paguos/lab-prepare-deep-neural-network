@@ -68,8 +68,10 @@ async def outputs(layer_id):
 async def test_model(test_image: UploadFile = File(...)):
     contents = test_image.file.read()
     image = Image.open(io.BytesIO(contents))
+    image = image.resize((28, 28))
+    image = image.convert("1")
     image = img_to_array(image)
-    # TODO: Fix image format
+    image.reshape(28, 28)
     keras_model.run(image)
     return {"filename": test_image.filename}
 
