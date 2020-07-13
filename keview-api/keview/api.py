@@ -2,6 +2,7 @@ from PIL import Image
 import io
 
 from nnv import NNV
+import matplotlib.pyplot as plt
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi import File, UploadFile
@@ -24,6 +25,8 @@ logger.info("Loading model ... done!")
 
 
 app = FastAPI()
+
+# https://fastapi.tiangolo.com/advanced/templates/
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
@@ -33,46 +36,6 @@ async def visualization():
     # show the summary of model
     return model.summary()
 
-
-
-# TODO: Add layer ID
-@app.get("/visualization/individual_layer")
-async def individual_layer():
-    # we will create a dictionary layers_info which maps a layer name to its charcteristics
-    layers_info = {}
-    for i in model.layers:
-        layers_info[i.name] = i.get_config()
-    # here the layer_weights dictionary will map every layer_name to its corresponding weights
-    layer_weights = {}
-    for i in model.layers:
-        layer_weights[i.name] = i.get_weights()
-    #print(layers_info['max_pooling2d'])
-    return layers_info['conv2d']
-
-
-# TODO: Add layer ID
-@app.get("/visualization/filter")
-async def print_filter():
-    layers = keras_model.get_layers()
-    layer_ids = [7, 8] #[1, 4, 7, 11, 15]
-    # plot the filters
-    #fig, ax = plt.subplots(nrows=1, ncols=5)
-    for i in range(2):
-        #print('weights: ' + str(layers[7].get_neurons()[0].get_weights()[0]))
-        current_layer = layers[layer_ids[i]].get_neurons()
-        print("Layer " + str(i) + ", #neurons: " + str(len(current_layer)))
-        '''
-        for j in range(len(current_layer)):
-            current_weights = current_layer[j].get_weights()
-            for k in range(len(current_weights)):
-                print("weights: " + str(current_weights[k]#[:,:,:,0][:,:,0]))
-
-           
-            ax[i].imshow(layers[layer_ids[i]].get_neurons()[0].get_weights()[0], cmap='gray') #[:, :, :, 0][:, :, 0], cmap='gray')
-            ax[i].set_title('block' + str(i + 1))
-            ax[i].set_xticks([])
-            ax[i].set_yticks([])
-            '''
 
 @app.get("/visualization/test")
 async def print_filter():
@@ -113,13 +76,12 @@ async def print_filter():
         {"title": "batch_normalization", "units": 8},
         {"title": "max_pooling2d", "units": 8},
     ]
-
     NNV(layersList).render(save_to_file="my_example.png")
 
 
 
 
-# ------------------------------------------------------------------------------------------------------------------------- #
+"""------------------------------------------------------------------------------------------------------------------------- """
 
 @app.get("/keview/v1alpha/layers")
 async def layers():
@@ -147,17 +109,46 @@ async def layer(request: Request, layer_id: str):
 
     # case conv2d layer
     if layer_id == "0" or layer_id == "3":
-        # TODO: show output (featuremap), bias + weights
-        return templates.TemplateResponse("conv2d_layer.html", {"request": request})
+        featuremap = keras_model.get_layers()[int(layer_id)].get_featuremaps()[-1]
+        output = featuremap.get_output()
+        bias = featuremap.get_bias()
+        weights = featuremap.get_weights()
+
+        print(f"bias: {bias}")
+        print(f"weights: {weights}")
+
+        return templates.TemplateResponse("conv2d_layer.html", {"request": request, "bias": bias, "weights": weights, "output": output})
 
     # case batch_normalization_layer
     elif layer_id == "1" or layer_id == "4":
-        # TODO: show output + normlization_dimension with gamma, beta, mean, variance
+        batch_normalization_layer = keras_model.get_layers()[int(layer_id)].get_normalization_dimensions()
+        for i in range(len(batch_normalization_layer)):
+            # TODO: Debug this
+            output = batch_normalization_layer[i].get_output()
+            print(f"output: {output}")
+            #plt.imshow(output, cmap="binary")
+            #plt.show()
+
+            beta = batch_normalization_layer[i].get_beta()
+            gamma = batch_normalization_layer[i].get_gamma()
+            mean = batch_normalization_layer[i].get_mean()
+            variance = batch_normalization_layer[i].get_variance()
+
+
+            # TODO: Write this to list and hand to FE
+            print(f"beta: {beta}, mean: {mean}, gamma: {gamma}, mean: {mean}, variance: {variance}")
+
         return templates.TemplateResponse("batch_normalization_layer.html", {"request": request})
 
     # case max_pooling2d layer
     elif layer_id == "2" or layer_id == "5":
         # TODO: show max_poolingdimension + output (NO PARAMS)
+        max_pooling_dim = keras_model.get_layers()[int(layer_id)].get_max_pooling_dimensions()
+        for i in range(len(max_pooling_dim)):
+            print(max_pooling_dim[i].get_output())
+            #plt.imshow(max_pooling_dim[i].get_output())
+            #plt.show()
+
         return templates.TemplateResponse("max_pooling_layer.html", {"request": request})
 
     # flatten layer
@@ -167,7 +158,10 @@ async def layer(request: Request, layer_id: str):
 
     # dense layer
     elif layer_id == "7" or layer_id == "8":
-        # TODO: show all weights + bias (get_components)
+        neurons = keras_model.get_layers()[int(layer_id)].get_neurons()
+
+        # TODO: Write all neurons into a list (neuron, weights-array, bias)
+        print(f"Neurons: {neurons[0].get_weights()}")
         return templates.TemplateResponse("dense_layer.html", {"request": request})
 
     else:
