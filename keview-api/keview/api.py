@@ -10,6 +10,8 @@ from keras.preprocessing.image import img_to_array
 from loguru import logger
 from tensorflow.python import keras
 
+import numpy as np
+
 from keview.models import KerasModel, Layer
 from keview.utils import NumpyEncoder
 
@@ -18,10 +20,26 @@ from fastapi.staticfiles import StaticFiles
 
 
 
+""" ----------------------------------- """
+data = keras.datasets.mnist
+(train_images_temp, train_labels), (test_images_temp, test_labels) = data.load_data()
+train_images = train_images_temp / 255.0
+
+logger.info(f"Test Images Shape: {np.shape(train_images)}")
+test_images = test_images_temp / 255.0
+train_images = train_images.reshape(60000, 28, 28, 1)
+test_images = test_images.reshape(10000, 28, 28, 1)
+image = 23
+""" ----------------------------------- """
+
 logger.info("Loading model ...")
 model = keras.models.load_model("examples/test.h5")
 keras_model = KerasModel(model)
 logger.info("Loading model ... done!")
+
+
+plt.imshow(test_images_temp[image], cmap='binary')
+keras_model.run(test_images[image])
 
 
 app = FastAPI()
@@ -35,50 +53,6 @@ templates = Jinja2Templates(directory="templates")
 async def visualization():
     # show the summary of model
     return model.summary()
-
-
-@app.get("/visualization/test")
-async def print_filter():
-    layer_list = []
-    layers_info = {}
-    for i in model.layers:
-        #print("name: " + str(layers_info[i.name]))
-        layers_info[i.name] = i.get_config()
-
-    layers = keras_model.get_layers()
-    layer_dense = [7, 8]  # [1, 4, 7, 11, 15]
-    layer_conv = [0, 3]
-    layer_batch = [1, 4]
-    layer_max_pooling = [2, 5]
-    layer_flatten = 6
-    # plot the filters
-    # fig, ax = plt.subplots(nrows=1, ncols=5)
-    for i in range(2):
-        # print('weights: ' + str(layers[7].get_neurons()[0].get_weights()[0]))
-        current_layer = layers[layer_dense[i]].get_neurons()
-    #for i in range(2):
-    #    print(str(layers[layer_max_pooling].get_max_pooling_dimensions()[0]))
-    '''
-    layersList = [
-        {"title": "conv2d", "units": 8, "color": "darkBlue"},
-        {"title": "batch_normalization", "units": 8},
-        {"title": "max_pooling2d", "units": 8},
-        {"title": "conv2d_1", "units": 16},
-        {"title": "batch_normalization_1", "units": 16},
-        {"title": "max_pooling2d_1", "units": 16},
-        {"title": "flatten", "units": 400},
-        {"title": "dense", "units": 100},
-        {"title": "dense_1", "units": 10, "color": "darkBlue"},
-    ]
-    '''
-    layersList = [
-        {"title": "conv2d", "units": 8, "color": "darkBlue"},
-        {"title": "batch_normalization", "units": 8},
-        {"title": "max_pooling2d", "units": 8},
-    ]
-    NNV(layersList).render(save_to_file="my_example.png")
-
-
 
 
 """------------------------------------------------------------------------------------------------------------------------- """
@@ -109,6 +83,9 @@ async def layer(request: Request, layer_id: str):
     if layer_id == "0" or layer_id == "3":
         featuremap = keras_model.get_layers()[int(layer_id)].get_featuremaps()[-1]
         output = featuremap.get_output()
+        plt.imshow(output, cmap="binary")
+        plt.show()
+
         bias = featuremap.get_bias()
         weights = featuremap.get_weights()
 
@@ -121,46 +98,44 @@ async def layer(request: Request, layer_id: str):
     elif layer_id == "1" or layer_id == "4":
         batch_normalization_layer = keras_model.get_layers()[int(layer_id)].get_normalization_dimensions()
         for i in range(len(batch_normalization_layer)):
-            # TODO: Debug this
+            # is None
             output = batch_normalization_layer[i].get_output()
-            print(f"output: {output}")
-            #plt.imshow(output, cmap="binary")
-            #plt.show()
+            plt.imshow(output, cmap="binary")
+            plt.show()
 
             beta = batch_normalization_layer[i].get_beta()
             gamma = batch_normalization_layer[i].get_gamma()
             mean = batch_normalization_layer[i].get_mean()
             variance = batch_normalization_layer[i].get_variance()
 
-
-            # TODO: Write this to list and hand to FE
-            print(f"beta: {beta}, mean: {mean}, gamma: {gamma}, mean: {mean}, variance: {variance}")
-
-        return templates.TemplateResponse("batch_normalization_layer.html", {"request": request})
+        return templates.TemplateResponse("batch_normalization_layer.html", {"request": request, "beta": beta, "mean": mean, "gamma": gamma, "variance": variance, "output": output})
 
     # case max_pooling2d layer
     elif layer_id == "2" or layer_id == "5":
-        # TODO: show max_poolingdimension + output (NO PARAMS)
         max_pooling_dim = keras_model.get_layers()[int(layer_id)].get_max_pooling_dimensions()
         for i in range(len(max_pooling_dim)):
-            print(max_pooling_dim[i].get_output())
-            #plt.imshow(max_pooling_dim[i].get_output())
-            #plt.show()
+            output = max_pooling_dim[i].get_output()
+            plt.imshow(output, cmap="binary")
+            plt.show()
 
-        return templates.TemplateResponse("max_pooling_layer.html", {"request": request})
+        return templates.TemplateResponse("max_pooling_layer.html", {"request": request, "output": output})
 
     # flatten layer
     elif layer_id == "6":
-        # TODO: skip (maybe find some useful text about flatten layer)
         return templates.TemplateResponse("flatten_layer.html", {"request": request})
 
     # dense layer
     elif layer_id == "7" or layer_id == "8":
         neurons = keras_model.get_layers()[int(layer_id)].get_neurons()
+        neuron_list = []
 
-        # TODO: Write all neurons into a list (neuron, weights-array, bias)
-        print(f"Neurons: {neurons[0].get_weights()}")
-        return templates.TemplateResponse("dense_layer.html", {"request": request})
+        for i in range(len(neurons)):
+            tmp = []
+            tmp.append(neurons[i].get_weights())
+            tmp.append(neurons[i].get_bias())
+            neuron_list.append(tmp)
+
+        return templates.TemplateResponse("dense_layer.html", {"request": request, "neurons": neuron_list})
 
     else:
         print("ERROR: Invalid Layer ID! Choose an ID in range [0, 8].")
