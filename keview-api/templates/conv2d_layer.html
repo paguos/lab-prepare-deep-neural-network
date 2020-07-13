@@ -3,8 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <title>Conv2d Layer</title>
+    <link href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet">
 </head>
 <body>
     <h1>Convolutional Layer</h1>
+    <h4> You've selected the Convolutional Layer.</h4>
+    <p> A convolution is the simple application of a filter to an input that results in an activation. Repeated application of the same filter to an input results in a map of activations called a feature map, indicating the locations and strength of a detected feature in an input, such as an image.</p>
+    <p>Read more <a href="https://machinelearningmastery.com/convolutional-layers-for-deep-learning-neural-networks/">here</a></p>
+    <hr>
+    <p> Output: {{ output }} </p>
+    <p> Bias: {{ bias }} </p>
+    <p> Weights: {{ weights }} </p>
 </body>
 </html>
