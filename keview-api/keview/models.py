@@ -132,9 +132,11 @@ class ConvolutionLayer(Layer):
             return self.__output
 
         def toJSON(self):
-            return json.dumps(
-                self, default=lambda o: o.__dict__, sort_keys=True, indent=4
-            )
+            return {
+                "weights": self.__weights,
+                "bias": self.__bias,
+                "output": self.__output,
+            }
 
 
 class FlattenLayer(Layer):
@@ -146,7 +148,7 @@ class FlattenLayer(Layer):
         self.__output = output[0]
 
     def get_components(self):
-        return None
+        return []
 
 
 class BatchNormalizationLayer(Layer):
@@ -196,9 +198,13 @@ class BatchNormalizationLayer(Layer):
             return self.__output
 
         def toJSON(self):
-            return json.dumps(
-                self, default=lambda o: o.__dict__, sort_keys=True, indent=4
-            )
+            return {
+                "gamma": self.__gamma,
+                "beta": self.__beta,
+                "mean": self.__mean,
+                "variance": self.__variance,
+                "output": self.__output,
+            }
 
 
 class MaxPoolingLayer(Layer):
@@ -231,9 +237,9 @@ class MaxPoolingLayer(Layer):
             return self.__output
 
         def toJSON(self):
-            return json.dumps(
-                self, default=lambda o: o.__dict__, sort_keys=True, indent=4
-            )
+            return {
+                "output": self.__output,
+            }
 
 
 class KerasModel:
