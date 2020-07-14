@@ -91,6 +91,6 @@ def fetch_component(layer: Layer, component_index):
         return layer.get_components()[int(component_index)]
     except IndexError:
         logger.error(f"Index out of range: {component_index}")
-        raise HTTPException(status_code=404, detail="Layer not found.")
+        raise HTTPException(status_code=404, detail="Component not found.")
     except ValueError:
         raise HTTPException(status_code=400, detail="Invalid component id.")
