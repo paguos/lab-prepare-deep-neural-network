@@ -25,12 +25,10 @@ async def layers():
     layers = keras_model.get_layers()
 
     layers_data = []
-    index = 0
-    for layer in layers:
-        layer_data = layer.toJSON()
-        layer_data["id"] = index
+    for i in range(0, len(layers)):
+        layer_data = layers[i].toJSON()
+        layer_data["id"] = i
         layers_data.append(layer_data)
-        index += 1
 
     return {"layers": layers_data}
 
@@ -66,14 +64,12 @@ async def outputs(layer_id):
 
 @app.post("/keview/v1alpha/test/")
 async def test_model(test_image: UploadFile = File(...)):
-    contents = test_image.file.read()
-    image = Image.open(io.BytesIO(contents))
-    image = image.resize((28, 28))
-    image = image.convert("1")
-    image = img_to_array(image)
-    image.reshape(28, 28)
-    keras_model.run(image)
-    return {"filename": test_image.filename}
+    file_content = test_image.file.read()
+    image = Image.open(io.BytesIO(file_content)).resize((28, 28)).convert("1")
+    image_data = img_to_array(image)
+    image_data.reshape(28, 28)
+    keras_model.run(image_data)
+    return {"details": f"The model successfully tested image: {test_image.filename}"}
 
 
 def fetch_layer(model: KerasModel, layer_index):
