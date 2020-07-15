@@ -11,7 +11,8 @@
     <p> A convolution is the simple application of a filter to an input that results in an activation. Repeated application of the same filter to an input results in a map of activations called a feature map, indicating the locations and strength of a detected feature in an input, such as an image.</p>
     <p>Read more <a href="https://machinelearningmastery.com/convolutional-layers-for-deep-learning-neural-networks/">here</a></p>
     <hr>
-    <p> Output: {{ output }} </p>
+    <p> Output Image: <br><br> <img src="{{ url_for('static', path='/images/tmp/tmp_conv2d.png') }}" width="150" height="150"></p>
+    <p> Output (array): {{ output }} </p>
     <p> Bias: {{ bias }} </p>
     <p> Weights: {{ weights }} </p>
 </body>
