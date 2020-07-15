@@ -1,5 +1,6 @@
 from PIL import Image
 import io
+from flask import Flask
 
 from nnv import NNV
 import matplotlib.pyplot as plt
@@ -86,7 +87,8 @@ async def layer(request: Request, layer_id: str):
         featuremap = keras_model.get_layers()[int(layer_id)].get_featuremaps()[-1]
         output = featuremap.get_output()
         plt.imshow(output, cmap="binary")
-        plt.show()
+        #plt.show()
+        plt.imsave('../keview-api/static/images/tmp/tmp_conv2d.png', output)
 
         bias = featuremap.get_bias()
         weights = featuremap.get_weights()
@@ -103,7 +105,8 @@ async def layer(request: Request, layer_id: str):
             # is None
             output = batch_normalization_layer[i].get_output()
             plt.imshow(output, cmap="binary")
-            plt.show()
+            #plt.show()
+            plt.savefig('../keview-api/static/images/tmp/tmp_batch_normalization_' + str(i) + '.png')
 
             beta = batch_normalization_layer[i].get_beta()
             gamma = batch_normalization_layer[i].get_gamma()
@@ -118,7 +121,8 @@ async def layer(request: Request, layer_id: str):
         for i in range(len(max_pooling_dim)):
             output = max_pooling_dim[i].get_output()
             plt.imshow(output, cmap="binary")
-            plt.show()
+            #plt.show()
+            plt.savefig('../keview-api/static/images/tmp/tmp_max_pooling_' + str(i) + '.png')
 
         return templates.TemplateResponse("max_pooling_layer.html", {"request": request, "output": output})
 
