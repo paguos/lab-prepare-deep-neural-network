@@ -13,6 +13,7 @@ from keras.preprocessing.image import img_to_array
 from loguru import logger
 from tensorflow.python import keras
 
+
 from keview.models import KerasModel, Layer
 from keview.utils import NumpyEncoder
 
@@ -38,8 +39,8 @@ keras_model.run(test_images[image])
 app = FastAPI()
 
 # https://fastapi.tiangolo.com/advanced/templates/
-app.mount("/static", StaticFiles(directory="static"), name="static")
-templates = Jinja2Templates(directory="templates")
+app.mount("/static", StaticFiles(directory="../UI/static"), name="static")
+templates = Jinja2Templates(directory="../UI/templates")
 
 
 """------------------------------------------------------------------------------------------------------------------------- """
@@ -47,7 +48,7 @@ templates = Jinja2Templates(directory="templates")
 
 # https://stackoverflow.com/questions/185936/how-to-delete-the-contents-of-a-folder
 def clearFolder():
-    folder = '../keview-api/static/images/tmp/'
+    folder = '../UI/static/images/tmp/'
     for filename in os.listdir(folder):
         file_path = os.path.join(folder, filename)
         try:
@@ -66,7 +67,7 @@ def isConvLayer(layer_id, request):
     output = featuremap.get_output()
     # plt.imshow(output, cmap="binary")
     # plt.show()
-    plt.imsave('../keview-api/static/images/tmp/tmp_conv2d.png', output)
+    plt.imsave('../UI/static/images/tmp/tmp_conv2d.png', output)
     bias = featuremap.get_bias()
     weights = featuremap.get_weights()
 
@@ -82,7 +83,7 @@ def isBatchNormalizationLayer(layer_id, request):
         output = batch_normalization_layer[i].get_output()
         # plt.imshow(output, cmap="binary")
         # plt.show()
-        plt.imsave('../keview-api/static/images/tmp/tmp_batch_normalization_' + str(i) + '.png', output)
+        plt.imsave('../UI/static/images/tmp/tmp_batch_normalization_' + str(i) + '.png', output)
 
         beta = batch_normalization_layer[i].get_beta()
         gamma = batch_normalization_layer[i].get_gamma()
@@ -116,7 +117,7 @@ def isMaxPoolingLayer(layer_id, request):
         output = max_pooling_dim[i].get_output()
         #plt.imshow(output, cmap="binary")
         # plt.show()
-        plt.imsave('../keview-api/static/images/tmp/tmp_max_pooling_' + str(i) + '.png', output)
+        plt.imsave('../UI/static/images/tmp/tmp_max_pooling_' + str(i) + '.png', output)
 
     return templates.TemplateResponse("max_pooling_layer.html", {"request": request, "output": output})
 
