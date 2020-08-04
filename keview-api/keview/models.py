@@ -1,5 +1,9 @@
 import json
 import numpy as np
+import matplotlib.pyplot as plt
+import inflection
+
+from loguru import logger
 
 from tensorflow.python import keras
 from abc import ABC, abstractmethod
@@ -262,6 +266,16 @@ class KerasModel:
         outputs = self.__run_function(np.asarray([single_element]))
         for layer, layer_output in zip(self.__layers, outputs):
             layer._set_output(layer_output)
+
+        for layer in self.__layers:
+            index = 0
+            layer_name = inflection.underscore(type(layer).__name__)
+            logger.info(f"Processing layer {layer_name} ...")
+            for component in layer.get_components():
+                output = component.get_output()
+                print(output)
+                plt.imsave(f"assets/images/{layer_name}_{index}.png", output)
+                index += 1
 
     def __create_layer(self, layer):
         if isinstance(layer, keras.layers.Dense):
