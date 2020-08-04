@@ -1,25 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <title>Max Pooling Layer</title
-    <link href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet">
+    <title>Max Pooling Layer</title>
+    <link href="{{ url_for('assets', path='/styles.css') }}" rel="stylesheet">
 </head>
+
 <body>
     <h1>Max Pooling Layer</h1>
     <h4> You've selected the a Max Pooling Layer.</h4>
-    <p> The function of the pooling layer is to progressively reduce the spatial size of the representation and reduce the amount of parameters and computation in the network. The Pooling layer operates on each feature map independently.</p>
+    <p> The function of the pooling layer is to progressively reduce the spatial size of the representation and reduce
+        the amount of parameters and computation in the network. The Pooling layer operates on each feature map
+        independently.</p>
     <hr>
-    <p> Output Images: <br><br>
-        <img src="{{ url_for('static', path='/images/tmp/tmp_max_pooling_0.png') }}" width="150" height="150">
-        <img src="{{ url_for('static', path='/images/tmp/tmp_max_pooling_1.png') }}" width="150" height="150">
-        <img src="{{ url_for('static', path='/images/tmp/tmp_max_pooling_2.png') }}" width="150" height="150">
-        <img src="{{ url_for('static', path='/images/tmp/tmp_max_pooling_3.png') }}" width="150" height="150">
-        <img src="{{ url_for('static', path='/images/tmp/tmp_max_pooling_4.png') }}" width="150" height="150">
-        <img src="{{ url_for('static', path='/images/tmp/tmp_max_pooling_5.png') }}" width="150" height="150">
-        <img src="{{ url_for('static', path='/images/tmp/tmp_max_pooling_6.png') }}" width="150" height="150">
-    </p>
+    <h4> Images:</h4>
+    <div id="images">
+        {% for img in images %}
+        <img src="{{ url_for('assets', path='/images') }}/{{ layer_id }}/{{ img }}" width="150" height="150">
+        {% endfor %}
+    </div>
     <hr>
-    <p> Output (Array): {{ output }}</p>
+    <h4> Component </h4>
+    <p> Name: {{ component.name }} </p>
+    <p> Count: {{ component.count }} </p>
+    <hr>
 </body>
+
 </html>
