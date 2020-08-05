@@ -12,6 +12,6 @@ example:
 
 test: build
 	docker-compose up -d
-	sleep 10
+	sleep 60
 	pipenv run pytest
 	docker-compose down -v
