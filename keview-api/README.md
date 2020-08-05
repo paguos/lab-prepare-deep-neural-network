@@ -6,6 +6,13 @@
 - [python](https://www.python.org/downloads/)
 - [pipenv](https://github.com/pypa/pipenv): python depedency manager
 
+To install the depencies run the following command:
+
+```sh
+pipenv install --dev --skip-lock
+```
+
+
 ## Run
 
 To run locally:
