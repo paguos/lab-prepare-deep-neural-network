@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Batch Normalization Layyer</title>
+    <link href="{{ url_for('assets', path='/styles.css') }}" rel="stylesheet">
+</head>
+
+<body>
+    <h1>Batch Normalization Layer</h1>
+    <h4> You've selected the Batch Normalization Layer.</h4>
+    <p> The basic idea behind batch normalization is to limit covariate shift by normalizing the activations of each
+        layer (transforming the inputs to be mean 0 and unit variance). This, supposedly, allows each layer to learn on
+        a more stable distribution of inputs, and would thus accelerate the training of the network</p>
+    <hr>
+    <h4> Images:</h4>
+    <div id="images">
+        {% for img in images %}
+        <img src="{{ url_for('assets', path='/images') }}/{{ layer_id }}/{{ img }}" width="150" height="150">
+        {% endfor %}
+    </div>
+    <hr>
+    <h4> Component </h4>
+    <p> Name: {{ component.name }} </p>
+    <p> Count: {{ component.count }} </p>
+    <hr>
+</body>
+
+</html>

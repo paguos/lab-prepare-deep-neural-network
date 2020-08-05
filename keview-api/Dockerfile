@@ -1,6 +1,8 @@
 FROM python:3.8.3-slim-buster
 
+RUN pip install --upgrade pip
 RUN pip install pipenv
+RUN pip install tensorflow
 
 WORKDIR keview-api
 COPY . .

@@ -1,8 +1,7 @@
-import json
 import numpy as np
 
-from tensorflow.python import keras
 from abc import ABC, abstractmethod
+from tensorflow.python import keras
 
 
 class Layer(ABC):
@@ -109,7 +108,8 @@ class ConvolutionLayer(Layer):
     def _set_output(self, layer_output):
         layer_output = np.einsum(
             'abc->cab', np.reshape(layer_output, np.shape(layer_output)[1:]))
-        for featuremap, featuremap_output in zip(self.__featuremaps, layer_output):
+        for featuremap, featuremap_output in zip(
+                self.__featuremaps, layer_output):
             # print(np.shape(featuremap_output))
             featuremap._set_output(featuremap_output)
 
@@ -132,9 +132,11 @@ class ConvolutionLayer(Layer):
             return self.__output
 
         def toJSON(self):
-            return json.dumps(
-                self, default=lambda o: o.__dict__, sort_keys=True, indent=4
-            )
+            return {
+                "weights": self.__weights,
+                "bias": self.__bias,
+                "output": self.__output,
+            }
 
 
 class FlattenLayer(Layer):
@@ -146,7 +148,7 @@ class FlattenLayer(Layer):
         self.__output = output[0]
 
     def get_components(self):
-        return None
+        return []
 
 
 class BatchNormalizationLayer(Layer):
@@ -166,7 +168,8 @@ class BatchNormalizationLayer(Layer):
     def _set_output(self, output):
         output = np.einsum(
             'abc->cab', np.reshape(output, np.shape(output)[1:]))
-        for dimension, dimension_output in zip(self.__normalization_diminsions, output):
+        for dimension, dimension_output in zip(
+                self.__normalization_diminsions, output):
             dimension._set_output(dimension_output)
 
     class NormalizationDimension:
@@ -196,9 +199,13 @@ class BatchNormalizationLayer(Layer):
             return self.__output
 
         def toJSON(self):
-            return json.dumps(
-                self, default=lambda o: o.__dict__, sort_keys=True, indent=4
-            )
+            return {
+                "gamma": self.__gamma,
+                "beta": self.__beta,
+                "mean": self.__mean,
+                "variance": self.__variance,
+                "output": self.__output,
+            }
 
 
 class MaxPoolingLayer(Layer):
@@ -217,7 +224,8 @@ class MaxPoolingLayer(Layer):
     def _set_output(self, output):
         output = np.einsum(
             'abc->cab', np.reshape(output, np.shape(output)[1:]))
-        for dimension, dimension_output in zip(self._max_pooling_dimensions, output):
+        for dimension, dimension_output in zip(
+                self._max_pooling_dimensions, output):
             dimension._set_output(dimension_output)
 
     class MaxPoolingDimension:
@@ -231,9 +239,9 @@ class MaxPoolingLayer(Layer):
             return self.__output
 
         def toJSON(self):
-            return json.dumps(
-                self, default=lambda o: o.__dict__, sort_keys=True, indent=4
-            )
+            return {
+                "output": self.__output,
+            }
 
 
 class KerasModel:
@@ -241,8 +249,10 @@ class KerasModel:
     def __init__(self, model: keras.Model):
         self.__model = model
         self.__layers = []
-        self.__run_function = keras.backend.function([self.__model.input],
-                                                     [layer.output for layer in self.__model.layers])
+        self.__run_function = keras.backend.function(
+            [self.__model.input],
+            [layer.output for layer in self.__model.layers]
+        )
         for layer in model.layers:
             self.__layers.append(self.__create_layer(layer))
 
@@ -266,9 +276,13 @@ class KerasModel:
             return ConvolutionLayer(layer)
         if isinstance(layer, keras.layers.Flatten):
             return FlattenLayer(layer)
-        if isinstance(layer, keras.layers.BatchNormalization):
+        if isinstance(layer, (
+            keras.layers.BatchNormalization,
+            keras.layers.normalization_v2.BatchNormalization
+        )):
             return BatchNormalizationLayer(layer)
         if isinstance(layer, keras.layers.MaxPooling2D):
             return MaxPoolingLayer(layer)
         else:
+            print(layer)
             return Layer(layer)

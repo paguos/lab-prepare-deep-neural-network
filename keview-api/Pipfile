@@ -5,11 +5,13 @@ verify_ssl = true
 
 [dev-packages]
 flake8 = "*"
+pytest = "*"
+requests = "*"
+tensorflow = "*"
 
 [packages]
 numpy = "*"
 keras = "*"
-tensorflow = "*"
 loguru = "*"
 matplotlib = "*"
 autopep8 = "*"
@@ -17,6 +19,9 @@ fastapi = "*"
 uvicorn = "*"
 python-multipart = "*"
 pillow = "*"
+aiofiles = "*"
+jinja2 = "*"
+inflection = "*"
 
 [requires]
 python_version = "3.8"

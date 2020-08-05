@@ -1,0 +1,33 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Convolution Layer</title>
+    <link href="{{ url_for('assets', path='/styles.css') }}" rel="stylesheet">
+</head>
+
+<body>
+    <h1>Convolution Layer</h1>
+    <h4> You've selected the Convolution Layer.</h4>
+    <p> A convolution is the simple application of a filter to an input that results in an activation. Repeated
+        application of the same filter to an input results in a map of activations called a feature map, indicating the
+        locations and strength of a detected feature in an input, such as an image.</p>
+    <p>Read more <a
+            href="https://machinelearningmastery.com/convolutional-layers-for-deep-learning-neural-networks/">here</a>
+    </p>
+    <hr>
+    <h4> Images:</h4>
+    <div id="images">
+        {% for img in images %}
+
+        <img src="{{ url_for('assets', path='/images') }}/{{ layer_id }}/{{ img }}" width="150" height="150">
+        {% endfor %}
+    </div>
+    <hr>
+    <h4> Component </h4>
+    <p> Name: {{ component.name }} </p>
+    <p> Count: {{ component.count }} </p>
+    <hr>
+</body>
+
+</html>
