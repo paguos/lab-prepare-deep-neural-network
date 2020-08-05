@@ -16,5 +16,20 @@ make run
 
 To run with docker:
 ```sh
-make docker
+make build
+docker run -p 8000:8000 keview-api
+```
+
+Open the following URL on your web browser: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+
+## Tests
+
+Run lint tests:
+```sh
+pipenv run flake8
+```
+
+Run unit tests:
+```sh
+make test
 ```
