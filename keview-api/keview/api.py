@@ -111,7 +111,9 @@ async def run_model(test_image: UploadFile = File(...)):
     image_data = img_to_array(image)
     image_data.reshape(28, 28)
     keras_model.run(image_data)
-    return {"details": f"The model successfully tested image: {test_image.filename}"}
+    return {
+        "details": f"Successfully tested image: {test_image.filename}"
+    }
 
 
 def fetch_layer(model: KerasModel, layer_index):

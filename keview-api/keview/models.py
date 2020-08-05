@@ -108,7 +108,8 @@ class ConvolutionLayer(Layer):
     def _set_output(self, layer_output):
         layer_output = np.einsum(
             'abc->cab', np.reshape(layer_output, np.shape(layer_output)[1:]))
-        for featuremap, featuremap_output in zip(self.__featuremaps, layer_output):
+        for featuremap, featuremap_output in zip(
+                self.__featuremaps, layer_output):
             # print(np.shape(featuremap_output))
             featuremap._set_output(featuremap_output)
 
@@ -167,7 +168,8 @@ class BatchNormalizationLayer(Layer):
     def _set_output(self, output):
         output = np.einsum(
             'abc->cab', np.reshape(output, np.shape(output)[1:]))
-        for dimension, dimension_output in zip(self.__normalization_diminsions, output):
+        for dimension, dimension_output in zip(
+                self.__normalization_diminsions, output):
             dimension._set_output(dimension_output)
 
     class NormalizationDimension:
@@ -222,7 +224,8 @@ class MaxPoolingLayer(Layer):
     def _set_output(self, output):
         output = np.einsum(
             'abc->cab', np.reshape(output, np.shape(output)[1:]))
-        for dimension, dimension_output in zip(self._max_pooling_dimensions, output):
+        for dimension, dimension_output in zip(
+                self._max_pooling_dimensions, output):
             dimension._set_output(dimension_output)
 
     class MaxPoolingDimension:
@@ -246,8 +249,10 @@ class KerasModel:
     def __init__(self, model: keras.Model):
         self.__model = model
         self.__layers = []
-        self.__run_function = keras.backend.function([self.__model.input],
-                                                     [layer.output for layer in self.__model.layers])
+        self.__run_function = keras.backend.function(
+            [self.__model.input],
+            [layer.output for layer in self.__model.layers]
+        )
         for layer in model.layers:
             self.__layers.append(self.__create_layer(layer))
 
