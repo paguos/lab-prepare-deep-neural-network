@@ -1,0 +1,17 @@
+version: 2.1
+jobs:
+ build:
+   machine: true
+   steps:
+     - checkout
+     # start proprietary DB using private Docker image
+     # with credentials stored in the UI
+     - run: pip install pipenv
+     - run: pipenv install --dev --skip-lock
+     - run: pipenv run pytest
+     - run: make build
+     # build the application image
+     - run: make test
+orbs:
+  python: circleci/python@0.3.2
+  pipenv: frameio/pipenv@0.15.0
