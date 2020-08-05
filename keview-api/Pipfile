@@ -5,11 +5,13 @@ verify_ssl = true
 
 [dev-packages]
 flake8 = "*"
+pytest = "*"
+requests = "*"
+tensorflow = "*"
 
 [packages]
 numpy = "*"
 keras = "*"
-tensorflow = "*"
 loguru = "*"
 matplotlib = "*"
 autopep8 = "*"

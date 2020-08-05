@@ -1,12 +1,7 @@
-import json
 import numpy as np
-import matplotlib.pyplot as plt
-import inflection
 
-from loguru import logger
-
-from tensorflow.python import keras
 from abc import ABC, abstractmethod
+from tensorflow.python import keras
 
 
 class Layer(ABC):
@@ -276,9 +271,13 @@ class KerasModel:
             return ConvolutionLayer(layer)
         if isinstance(layer, keras.layers.Flatten):
             return FlattenLayer(layer)
-        if isinstance(layer, keras.layers.BatchNormalization):
+        if isinstance(layer, (
+            keras.layers.BatchNormalization,
+            keras.layers.normalization_v2.BatchNormalization
+        )):
             return BatchNormalizationLayer(layer)
         if isinstance(layer, keras.layers.MaxPooling2D):
             return MaxPoolingLayer(layer)
         else:
+            print(layer)
             return Layer(layer)
