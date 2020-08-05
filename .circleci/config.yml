@@ -1,17 +1,19 @@
 version: 2.1
 jobs:
  build:
-   machine: true
+   executor: python/default
    steps:
-     - checkout
-     # start proprietary DB using private Docker image
-     # with credentials stored in the UI
-     - run: pip install pipenv
-     - run: pipenv install --dev --skip-lock
-     - run: pipenv run pytest
-     - run: make build
-     # build the application image
-     - run: make test
+      - checkout
+      - python/load-cache
+      - run: pip install pipenv
+      - python/save-cache
+      - run:
+          command: |
+            cd keview-api
+            pipenv install --dev --skip-lock
+            pipenv run flake8
+            # # pytest would be a dep in requirements.txt
+            # pytest
+          name: Keview-API
 orbs:
   python: circleci/python@0.3.2
-  pipenv: frameio/pipenv@0.15.0
