@@ -10,7 +10,8 @@ from loguru import logger
 from PIL import Image
 from tensorflow.python import keras
 
-from keview.models import KerasModel, Layer
+from keview.models import KerasModel
+from keview.models import Layer, DenseLayer, FlattenLayer
 from keview.utils import MNIST, NumpyEncoder
 
 IMAGES_DIR = "assets/images"
@@ -73,27 +74,38 @@ async def outputs(layer_id):
 
 @app.get("/keview/v1alpha/layers/{layer_id}/display")
 async def display_layer(request: Request, layer_id: str):
-    layer = keras_model.get_layers()[int(layer_id)]
+    layer = fetch_layer(keras_model, layer_id)
     layer_name = inflection.underscore(type(layer).__name__)
     components = layer.get_components()
-    images = MNIST.list_images(int(layer_id))
+
+    template_data = {
+        "layer_id": layer_id,
+        "request": request,
+    }
+
+    if isinstance(layer, DenseLayer):
+        template_data["component"] = {
+            "name": type(components[0]).__name__,
+            "count": len(components)
+        }
+    elif isinstance(layer, FlattenLayer):
+        pass
+    else:
+        images = MNIST.list_images(int(layer_id))
+        template_data["images"] = images
+        template_data["component"] = {
+            "name": type(components[0]).__name__,
+            "count": len(components)
+        }
 
     return templates.TemplateResponse(
         f"{layer_name}.html",
-        {
-            "images": images,
-            "component": {
-                "name": type(components[0]).__name__,
-                "count": len(components)
-            },
-            "layer_id": layer_id,
-            "request": request,
-        }
+        template_data
     )
 
 
 @app.post("/keview/v1alpha/test/")
-async def test_model(test_image: UploadFile = File(...)):
+async def run_model(test_image: UploadFile = File(...)):
     file_content = test_image.file.read()
     image = Image.open(io.BytesIO(file_content)).resize((28, 28)).convert("1")
     image_data = img_to_array(image)

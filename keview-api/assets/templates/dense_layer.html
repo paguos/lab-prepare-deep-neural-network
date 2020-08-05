@@ -1,15 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Dense Layer</title>
-    <link href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet">
+    <link href="{{ url_for('assets', path='/styles.css') }}" rel="stylesheet">
 </head>
+
 <body>
     <h1>Dense-Layer</h1>
     <h4> You've selected the Dense Layer.</h4>
     <p> A dense layer is simply a layer where each unit or neuron is connected to each neuron in the next layer.</p>
     <hr>
-    <p> Neurons: {{ neurons }}</p>
+    <h4> Component </h4>
+    <p> Name: {{ component.name }} </p>
+    <p> Count: {{ component.count }} </p>
 </body>
+
 </html>
