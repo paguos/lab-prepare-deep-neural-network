@@ -15,5 +15,10 @@ jobs:
             cd keview-api
             pipenv run flake8
           name: Lint Test
+      - run:
+          command: |
+            cd keview-api
+            make test
 orbs:
   python: circleci/python@0.3.2
+  docker: circleci/docker@1.4.0
