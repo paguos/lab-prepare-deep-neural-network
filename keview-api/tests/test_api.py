@@ -1,8 +1,8 @@
+import os
 import pytest
 import requests
 from requests.adapters import HTTPAdapter
-
-HOST = "http://127.0.0.1"
+HOST = os.getenv("KEVIEW_HOST", "http://127.0.0.1")
 PORT = 8000
 ENDPOINT = "keview/v1alpha"
 API_URL = f"{HOST}:{PORT}/{ENDPOINT}"

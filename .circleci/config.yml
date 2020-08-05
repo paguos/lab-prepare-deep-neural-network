@@ -19,6 +19,7 @@ jobs:
       - run:
           command: |
             cd keview-api
+            export KEVIEW_HOST=api
             make test
 orbs:
   python: circleci/python@0.3.2
