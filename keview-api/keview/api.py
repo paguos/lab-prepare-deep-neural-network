@@ -1,23 +1,32 @@
-from PIL import Image
 import io
+import inflection
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi import File, UploadFile
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 from keras.preprocessing.image import img_to_array
 from loguru import logger
+from PIL import Image
 from tensorflow.python import keras
 
 from keview.models import KerasModel, Layer
-from keview.utils import NumpyEncoder
+from keview.utils import MNIST, NumpyEncoder
+
+IMAGES_DIR = "assets/images"
 
 
-logger.info("Loading model ...")
-model = keras.models.load_model("examples/test.h5")
+logger.info("Initalizing model ...")
+model = keras.models.load_model("assets/keview_model.h5")
 keras_model = KerasModel(model)
-logger.info("Loading model ... done!")
-
+keras_model.run(MNIST.get_test_image())
+MNIST.save_images(keras_model)
+logger.info("Initalizing model ... done!")
 
 app = FastAPI()
+
+app.mount("/assets", StaticFiles(directory="assets"), name="assets")
+templates = Jinja2Templates(directory="assets/templates")
 
 
 @app.get("/keview/v1alpha/layers")
@@ -60,6 +69,27 @@ async def outputs(layer_id):
     layer = fetch_layer(keras_model, layer_id)
     outputs = [c.toJSON()["output"] for c in layer.get_components()]
     return NumpyEncoder.encodeJSON(outputs)
+
+
+@app.get("/keview/v1alpha/layers/{layer_id}/display")
+async def display_layer(request: Request, layer_id: str):
+    layer = keras_model.get_layers()[int(layer_id)]
+    layer_name = inflection.underscore(type(layer).__name__)
+    components = layer.get_components()
+    images = MNIST.list_images(int(layer_id))
+
+    return templates.TemplateResponse(
+        f"{layer_name}.html",
+        {
+            "images": images,
+            "component": {
+                "name": type(components[0]).__name__,
+                "count": len(components)
+            },
+            "layer_id": layer_id,
+            "request": request,
+        }
+    )
 
 
 @app.post("/keview/v1alpha/test/")

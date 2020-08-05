@@ -17,6 +17,9 @@ fastapi = "*"
 uvicorn = "*"
 python-multipart = "*"
 pillow = "*"
+aiofiles = "*"
+jinja2 = "*"
+inflection = "*"
 
 [requires]
 python_version = "3.8"
