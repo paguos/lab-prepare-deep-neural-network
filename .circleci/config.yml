@@ -4,6 +4,7 @@ jobs:
    executor: python/default
    steps:
       - checkout
+      - setup_remote_docker
       - run: pip install pipenv
       - run:
           command: |
