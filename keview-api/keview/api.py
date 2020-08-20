@@ -72,6 +72,15 @@ async def outputs(layer_id):
     return NumpyEncoder.encodeJSON(outputs)
 
 
+@app.get("/")
+async def display_layer(request: Request):
+    template_data = {
+        "request": request
+    }
+    return templates.TemplateResponse("index.html", template_data)
+
+
+
 @app.get("/keview/v1alpha/layers/{layer_id}/display")
 async def display_layer(request: Request, layer_id: str):
     layer = fetch_layer(keras_model, layer_id)
