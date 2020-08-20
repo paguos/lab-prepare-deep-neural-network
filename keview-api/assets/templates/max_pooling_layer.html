@@ -1,10 +1,51 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE HTML>
+<html>
 <head>
-    <meta charset="UTF-8">
     <title>Max Pooling Layer</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="stylesheet" href="/assets/css/main.css"/>
 </head>
 <body>
-    <h1>Max Pooling Layer</h1>
+
+<!-- Header -->
+<header id="header" class="alt">
+    <div class="inner">
+        <h1>Max Pooling Layer</h1>
+         <h4> You've selected the a Max Pooling Layer.</h4>
+    <p> The function of the pooling layer is to progressively reduce the spatial size of the representation and reduce
+        the amount of parameters and computation in the network. The Pooling layer operates on each feature map
+        independently.</p>
+    <hr>
+    </div>
+</header>
+
+<!-- Wrapper -->
+<div id="wrapper">
+
+    <!-- Banner -->
+    <section id="intro" class="main">
+        <h4> Images:</h4>
+        <div id="images">
+            {% for img in images %}
+
+            <img src="{{ url_for('assets', path='/images') }}/{{ layer_id }}/{{ img }}" width="200" height="200">
+            {% endfor %}
+        </div>
+        <hr>
+        <h4> Component </h4>
+        <p> Name: {{ component.name }} </p>
+        <p> Count: {{ component.count }} </p>
+        <hr>
+    </section>
+
+</div>
+
+<!-- Scripts -->
+<script src="assets/js/jquery.min.js"></script>
+<script src="assets/js/skel.min.js"></script>
+<script src="assets/js/util.js"></script>
+<script src="assets/js/main.js"></script>
+
 </body>
 </html>
