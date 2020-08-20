@@ -1,33 +1,55 @@
-<html lang="en">
-
+<!DOCTYPE HTML>
+<html>
 <head>
-    <meta charset="UTF-8">
     <title>Convolution Layer</title>
-    <link href="{{ url_for('assets', path='/styles.css') }}" rel="stylesheet">
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <link rel="stylesheet" href="/assets/css/main.css"/>
 </head>
-
 <body>
-    <h1>Convolution Layer</h1>
-    <h4> You've selected the Convolution Layer.</h4>
-    <p> A convolution is the simple application of a filter to an input that results in an activation. Repeated
-        application of the same filter to an input results in a map of activations called a feature map, indicating the
-        locations and strength of a detected feature in an input, such as an image.</p>
-    <p>Read more <a
-            href="https://machinelearningmastery.com/convolutional-layers-for-deep-learning-neural-networks/">here</a>
-    </p>
-    <hr>
-    <h4> Images:</h4>
-    <div id="images">
-        {% for img in images %}
 
-        <img src="{{ url_for('assets', path='/images') }}/{{ layer_id }}/{{ img }}" width="150" height="150">
-        {% endfor %}
+<!-- Header -->
+<header id="header" class="alt">
+    <div class="inner">
+        <h1>Convolution Layer</h1>
+        <h4> You've selected the Convolution Layer.</h4>
+        <p> A convolution is the simple application of a filter to an input that results in an activation. Repeated
+            application of the same filter to an input results in a map of activations called a feature map, indicating
+            the
+            locations and strength of a detected feature in an input, such as an image.</p>
+        <p>Read more <a
+                href="https://machinelearningmastery.com/convolutional-layers-for-deep-learning-neural-networks/">here</a>
+        </p>
+        <hr>
     </div>
-    <hr>
-    <h4> Component </h4>
-    <p> Name: {{ component.name }} </p>
-    <p> Count: {{ component.count }} </p>
-    <hr>
-</body>
+</header>
 
+<!-- Wrapper -->
+<div id="wrapper">
+
+    <!-- Banner -->
+    <section id="intro" class="main">
+        <h4> Images:</h4>
+        <div id="images">
+            {% for img in images %}
+
+            <img src="{{ url_for('assets', path='/images') }}/{{ layer_id }}/{{ img }}" width="150" height="150">
+            {% endfor %}
+        </div>
+        <hr>
+        <h4> Component </h4>
+        <p> Name: {{ component.name }} </p>
+        <p> Count: {{ component.count }} </p>
+        <hr>
+    </section>
+
+</div>
+
+<!-- Scripts -->
+<script src="assets/js/jquery.min.js"></script>
+<script src="assets/js/skel.min.js"></script>
+<script src="assets/js/util.js"></script>
+<script src="assets/js/main.js"></script>
+
+</body>
 </html>
