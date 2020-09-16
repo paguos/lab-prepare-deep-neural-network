@@ -5,9 +5,15 @@
     <meta charset="UTF-8">
     <title>Dense Layer</title>
     <link href="{{ url_for('assets', path='/styles.css') }}" rel="stylesheet">
+    <link href="{{ url_for('assets', path='/templates') }}/dense_layer.css" rel="stylesheet">
 </head>
 
 <body>
+
+    {% if not layer_id|int == 0 %}
+    <a href="/keview/v1alpha/layers/{{ layer_id|int -1 }}/display" class="previous">previous</a> {% endif %} {% if not max_layer_id|int == layer_id|int %}
+    <a href='/keview/v1alpha/layers/{{layer_id|int +1}}/display' class="next">next</a> {% endif %}
+
     <h1>Dense-Layer</h1>
     <h4> You've selected the Dense Layer.</h4>
     <p> A dense layer is simply a layer where each unit or neuron is connected to each neuron in the next layer.</p>
@@ -15,6 +21,25 @@
     <h4> Component </h4>
     <p> Name: {{ component.name }} </p>
     <p> Count: {{ component.count }} </p>
+    <p> Output: {{ component.output }} </p>
+    <div id="outer-box">
+        <svg id="svg" width="100%" height="50vh" style="position:absolute; " stroke="black">
+
+        </svg>
+
+        <div id="bias" style="position: absolute;
+        left: 50%;
+        transform: translate(-50%, 0%); top:50vh; background-color: grey;">
+            SUMME+BIAS=
+        </div>
+        <div class="inputNeuronBox" id="inputNeuronBox" onscroll="onScrollInput()"></div>
+        <div class="outputNeuronBox" id="outputNeuronBox" onscroll="onScrollOutput()"></div>
+    </div>
+    </div>
 </body>
+<script language="javascript" type="text/javascript" src="{{ url_for('assets', path='/templates') }}/dense_layer.js"></script>
+<script>
+    onload('{{ component.neuronalWeights | tojson }}', '{{component.neuronalInput | tojson}}')
+</script>
 
 </html>

@@ -1,33 +1,55 @@
 import io
+from pathlib import Path
 import inflection
-
+import time
+import os
+import shutil
 from fastapi import FastAPI, HTTPException, Request
 from fastapi import File, UploadFile
+from fastapi.encoders import jsonable_encoder
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from fastapi.responses import FileResponse
 from keras.preprocessing.image import img_to_array
 from loguru import logger
-from PIL import Image
+from PIL import Image, ImageFilter, ImageEnhance, ImageOps
+import matplotlib.pyplot as plt
+import tensorflow
 from tensorflow.python import keras
-
+from fastapi.middleware.cors import CORSMiddleware
+import numpy as np
 from keview.models import KerasModel
-from keview.models import Layer, DenseLayer, FlattenLayer
+from keview.models import Layer, DenseLayer, FlattenLayer, ConvolutionLayer, BatchNormalizationLayer
 from keview.utils import MNIST, NumpyEncoder
 
 IMAGES_DIR = "assets/images"
 
 
 logger.info("Initalizing model ...")
-model = keras.models.load_model("assets/keview_model.h5")
+print(tensorflow.__version__)
+model = keras.models.load_model("assets/mnist_neural_network.h5")
 keras_model = KerasModel(model)
-keras_model.run(MNIST.get_test_image())
-MNIST.save_images(keras_model)
+input_img=MNIST.get_test_image()
+keras_model.run(input_img)
+
+
+
+MNIST.save_images(keras_model,input_img)
 logger.info("Initalizing model ... done!")
 
 app = FastAPI()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 app.mount("/assets", StaticFiles(directory="assets"), name="assets")
 templates = Jinja2Templates(directory="assets/templates")
+
 
 
 @app.get("/keview/v1alpha/layers")
@@ -69,50 +91,87 @@ async def component(layer_id, component_id):
 async def outputs(layer_id):
     layer = fetch_layer(keras_model, layer_id)
     outputs = [c.toJSON()["output"] for c in layer.get_components()]
+    if isinstance(layer, FlattenLayer):
+        outputs=outputs[0]
     return NumpyEncoder.encodeJSON(outputs)
 
 
 @app.get("/keview/v1alpha/layers/{layer_id}/display")
 async def display_layer(request: Request, layer_id: str):
+    
     layer = fetch_layer(keras_model, layer_id)
     layer_name = inflection.underscore(type(layer).__name__)
-    components = layer.get_components()
-
+    
+    componentsvar = layer.get_components()
     template_data = {
         "layer_id": layer_id,
+        "max_layer_id": len(keras_model.get_layers())-1,
         "request": request,
     }
-
     if isinstance(layer, DenseLayer):
+        
         template_data["component"] = {
-            "name": type(components[0]).__name__,
-            "count": len(components)
+            
+            "name": type(componentsvar[0]).__name__,
+            "count": len(componentsvar),
+            "neuronalInput": await outputs(str(int(layer_id)-1)),
+            "neuronalWeights": await components(layer_id),
         }
     elif isinstance(layer, FlattenLayer):
         pass
     else:
         images = MNIST.list_images(int(layer_id))
+        images_before = MNIST.list_images(int(layer_id)-1)
+        images.sort()
+        images_before.sort()
         template_data["images"] = images
+        template_data["imagesBefore"] = images_before
         template_data["component"] = {
-            "name": type(components[0]).__name__,
-            "count": len(components)
+            "name": type(componentsvar[0]).__name__,
+            "count": len(componentsvar),
+            "neuronalWeights": await components(layer_id),
         }
-
     return templates.TemplateResponse(
         f"{layer_name}.html",
         template_data
     )
 
+def invert(image):
+    return image.point(lambda p: 255 - p)
+@app.post("/keview/v1alpha/run/")
 
-@app.post("/keview/v1alpha/test/")
 async def run_model(test_image: UploadFile = File(...)):
     file_content = test_image.file.read()
-    image = Image.open(io.BytesIO(file_content)).resize((28, 28)).convert("1")
-    image_data = img_to_array(image)
+    image=Image.open(io.BytesIO(file_content))
+    im = image.convert('RGBA')
+    r, g, b, a = im.split()
+    r, g, b = map(invert, (r, g, b))
+    image = Image.merge('RGBA', (r, g, b, a))
+    image=image.resize((28, 28)).convert('L') 
+    image_data = img_to_array(image)/255
     image_data.reshape(28, 28)
     keras_model.run(image_data)
+    MNIST.save_images(keras_model,image_data)
+    layers = keras_model.get_layers()
+    prediction=await outputs(str(len(layers)-1))
     return {
-        "details": f"Successfully tested image: {test_image.filename}"
+        "prediction": str(np.argmax(prediction))
+    }
+
+@app.post("/keview/v1alpha/store-train-image/")
+
+async def saveimg(test_image: UploadFile = File(...)):
+    file_content = test_image.file.read()
+    image=Image.open(io.BytesIO(file_content))
+    im = image.convert('RGBA')
+    r, g, b, a = im.split()
+    r, g, b = map(invert, (r, g, b))
+    image = Image.merge('RGBA', (r, g, b, a))
+    image=image.resize((28, 28)).convert('L') 
+
+    image.save("train-data/"+time.strftime("%Y%m%d-%H%M%S")+"_"+test_image.filename)
+    return {
+        "details": f"Successfully: {test_image.filename}"
     }
 
 
@@ -134,3 +193,13 @@ def fetch_component(layer: Layer, component_index):
         raise HTTPException(status_code=404, detail="Component not found.")
     except ValueError:
         raise HTTPException(status_code=400, detail="Invalid component id.")
+
+@app.get("/keview/v1alpha/run-draw/display")
+async def runDraw(request: Request):
+    
+    return FileResponse("assets/templates/run-draw.html")
+
+@app.get("/keview/v1alpha/train-draw/display")
+async def trainDraw(request: Request):
+    
+    return FileResponse("assets/templates/train-draw.html")

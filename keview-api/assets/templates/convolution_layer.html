@@ -7,27 +7,47 @@
 </head>
 
 <body>
+    {% if not layer_id|int == 0 %}
+    <a href="/keview/v1alpha/layers/{{ layer_id|int -1 }}/display" class="previous">previous</a> {% endif %} {% if not max_layer_id|int == layer_id|int %}
+    <a href='/keview/v1alpha/layers/{{layer_id|int +1}}/display' class="next">next</a> {% endif %}
+
     <h1>Convolution Layer</h1>
     <h4> You've selected the Convolution Layer.</h4>
-    <p> A convolution is the simple application of a filter to an input that results in an activation. Repeated
-        application of the same filter to an input results in a map of activations called a feature map, indicating the
-        locations and strength of a detected feature in an input, such as an image.</p>
-    <p>Read more <a
-            href="https://machinelearningmastery.com/convolutional-layers-for-deep-learning-neural-networks/">here</a>
+    <p> A convolution is the simple application of a filter to an input that results in an activation. Repeated application of the same filter to an input results in a map of activations called a feature map, indicating the locations and strength of a detected
+        feature in an input, such as an image.</p>
+    <p>Read more <a href="https://machinelearningmastery.com/convolutional-layers-for-deep-learning-neural-networks/">here</a>
     </p>
-    <hr>
-    <h4> Images:</h4>
-    <div id="images">
+
+    <div class="images_before" id="images_before">
+        <h4> Images before:</h4>
+        {% for imgbef in imagesBefore %}
+        <img style="display: block;" src="{{ url_for('assets', path='/images') }}/{{ layer_id|int -1 }}/{{ imgbef }}" width="150" height="150"> {% endfor %}
+        <h4> Component </h4>
+        <p> Name: {{ component.name }} </p>
+        <p> Count: {{ component.count }} </p>
+    </div>
+
+    <div class="images_after" id="images_after">
+        <h4> Images after:</h4>
         {% for img in images %}
 
-        <img src="{{ url_for('assets', path='/images') }}/{{ layer_id }}/{{ img }}" width="150" height="150">
-        {% endfor %}
+        <img style="display: block;" src="{{ url_for('assets', path='/images') }}/{{ layer_id }}/{{ img }}" onmouseover="updateKernel(this)" width="150" height="150"> {% endfor %}
+
     </div>
-    <hr>
-    <h4> Component </h4>
-    <p> Name: {{ component.name }} </p>
-    <p> Count: {{ component.count }} </p>
-    <hr>
+    <div class="container" id="container">
+        <p id="kernel_bias">bias</p>
+    </div>
+    <div style="clear:both"></div>
+
+
 </body>
+
+
+
+
+<script language="javascript" type="text/javascript" src="{{ url_for('assets', path='/templates') }}/convolution_layer.js"></script>
+<script>
+    onload('{{ component.neuronalWeights | tojson }}')
+</script>
 
 </html>
