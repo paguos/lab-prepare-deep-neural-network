@@ -142,13 +142,26 @@ class ConvolutionLayer(Layer):
 class FlattenLayer(Layer):
     def __init__(self, layer: keras.layers.Flatten):
         Layer.__init__(self, layer)
-        self.__output = None
+        self.__helpers = [self.Helper()]
 
     def _set_output(self, output):
-        self.__output = output[0]
+        self.__helpers[0]._set_output(output[0])
 
     def get_components(self):
-        return []
+        return self.__helpers  # def toJSON(self):
+
+    class Helper:
+        def __init__(self):
+            self.__output = []
+            pass
+
+        def _set_output(self, output):
+            self.__output = output
+
+        def toJSON(self):
+            return {
+                "output": self.__output
+            }
 
 
 class BatchNormalizationLayer(Layer):
@@ -284,5 +297,4 @@ class KerasModel:
         if isinstance(layer, keras.layers.MaxPooling2D):
             return MaxPoolingLayer(layer)
         else:
-            print(layer)
-            return Layer(layer)
+            return None

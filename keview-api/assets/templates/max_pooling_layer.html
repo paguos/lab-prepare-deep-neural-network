@@ -5,26 +5,42 @@
     <meta charset="UTF-8">
     <title>Max Pooling Layer</title>
     <link href="{{ url_for('assets', path='/styles.css') }}" rel="stylesheet">
+
 </head>
 
 <body>
+    {% if not layer_id|int == 0 %}
+    <a href="/keview/v1alpha/layers/{{ layer_id|int -1 }}/display" class="previous">previous</a> {% endif %} {% if not max_layer_id|int == layer_id|int %}
+    <a href='/keview/v1alpha/layers/{{layer_id|int +1}}/display' class="next">next</a> {% endif %}
     <h1>Max Pooling Layer</h1>
     <h4> You've selected the a Max Pooling Layer.</h4>
-    <p> The function of the pooling layer is to progressively reduce the spatial size of the representation and reduce
-        the amount of parameters and computation in the network. The Pooling layer operates on each feature map
-        independently.</p>
-    <hr>
-    <h4> Images:</h4>
-    <div id="images">
-        {% for img in images %}
-        <img src="{{ url_for('assets', path='/images') }}/{{ layer_id }}/{{ img }}" width="150" height="150">
-        {% endfor %}
+    <p> The function of the pooling layer is to progressively reduce the spatial size of the representation and reduce the amount of parameters and computation in the network. The Pooling layer operates on each feature map independently.
+    </p>
+
+    <div class="images_before" id="images_before">
+        <h4> Images before:</h4>
+        {% for imgbef in imagesBefore %}
+        <img style="display: block;" src="{{ url_for('assets', path='/images') }}/{{ layer_id|int -1 }}/{{ imgbef }}" width="150" height="150"> {% endfor %}
+        <h4> Component </h4>
+        <p> Name: {{ component.name }} </p>
+        <p> Count: {{ component.count }} </p>
     </div>
-    <hr>
-    <h4> Component </h4>
-    <p> Name: {{ component.name }} </p>
-    <p> Count: {{ component.count }} </p>
-    <hr>
+
+    <div class="images_after" id="images_after">
+        <h4> Images after:</h4>
+        {% for img in images %}
+
+        <img style="display: block;" src="{{ url_for('assets', path='/images') }}/{{ layer_id }}/{{ img }}" width="150" height="150"> {% endfor %}
+
+    </div>
+    <div class="container" id="container">
+    </div>
+    <div style="clear:both"></div>
+
+</body>
+
+
+
 </body>
 
 </html>

@@ -1,0 +1,46 @@
+<html>
+<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+<link href="/assets/templates/train-draw.css" rel="stylesheet">
+
+
+<head>
+    <style>
+        .example_c {
+            color: #494949 !important;
+            text-transform: uppercase;
+            text-decoration: none;
+            background: #ffffff;
+            width: 100;
+            padding: 12px;
+            margin-top: 2px;
+            margin-right: 1px;
+            border: 4px solid #494949 !important;
+            display: inline-block;
+            float: left;
+            transition: all 0.4s ease 0s;
+        }
+        
+        .example_c:hover {
+            color: #ffffff !important;
+            background: #444444;
+            border-color: #383838 !important;
+            transition: all 0.4s ease 0s;
+        }
+    </style>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" />
+</head>
+
+<body onload="init()" style="margin: 0; height: 100%; overflow: hidden">
+    <canvas id="can" width="400" height="400" style="border:2px solid; "></canvas>
+
+    <div class="button_cont" align="center"><a class="example_c" onclick="save()" target="_blank">run</a></div>
+
+    <div class="button_cont" align="center"><a class="example_c" onclick="erase()" target="_blank">clear</a></div>
+    <label for="fname">number:</label><br>
+    <input type="text" maxlength="1" oninput="this.value=this.value.replace(/[^0-9]/g,'');" id="fname" name="fname"><br><br>
+
+</body>
+
+<script language="javascript" type="text/javascript" src="/assets/templates/train-draw.js"></script>
+
+</html>
