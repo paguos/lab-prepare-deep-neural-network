@@ -12,10 +12,10 @@
 <body>
 
     {% if not layer_id|int == 0 %}
-    <a href="/keview/v1alpha/layers/{{ layer_id|int -1 }}/display" class="previous">previous</a>
+    <a href="/keview/layers/{{ layer_id|int -1 }}" class="previous">previous</a>
     {% endif %}
     {% if not max_layer_id|int == layer_id|int %}
-    <a href='/keview/v1alpha/layers/{{layer_id|int +1}}/display' class="next">next</a>
+    <a href='/keview/layers/{{ layer_id|int +1 }}' class="next">next</a>
     {% endif %}
 
     <!-- Header -->
