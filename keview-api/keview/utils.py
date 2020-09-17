@@ -3,7 +3,9 @@ import inflection
 import matplotlib.pyplot as plt
 import numpy as np
 import random
-
+import shutil
+import time
+from PIL import Image
 from os import listdir
 from os.path import isfile, join
 
@@ -12,6 +14,7 @@ from pathlib import Path
 from tensorflow.python import keras
 
 from keview.models import DenseLayer
+from keview.models import FlattenLayer
 from keview.models import KerasModel
 
 
@@ -42,7 +45,13 @@ class MNIST:
         return test_images[image_index]
 
     @staticmethod
-    def save_images(model: KerasModel):
+    def save_images(model: KerasModel, input_img):
+        img_directory = "assets/images/-1/"
+        shutil.rmtree(img_directory, ignore_errors=True)
+        Path(img_directory).mkdir(parents=True, exist_ok=True)
+        input_img = np.reshape(input_img*255, (28, 28))
+        plt.imsave(f"{img_directory}input_{str(time.time())}.png",
+                   Image.fromarray(input_img))
 
         layer_index = 0
 
@@ -53,13 +62,17 @@ class MNIST:
             logger.info(f"Processing layer {layer_name} ...")
             if isinstance(layer, DenseLayer):
                 continue
+            if isinstance(layer, FlattenLayer):
+                continue
             img_directory = f"assets/images/{layer_index}"
+            shutil.rmtree(img_directory, ignore_errors=True)
             Path(img_directory).mkdir(parents=True, exist_ok=True)
 
             for component in layer.get_components():
                 output = component.get_output()
                 plt.imsave(
-                    f"{img_directory}/{layer_name}_{comp_index}.png", output)
+                    f"{img_directory}/{layer_name}_{comp_index}__{str(time.time())}.png", output
+                )
                 comp_index += 1
 
             layer_index += 1

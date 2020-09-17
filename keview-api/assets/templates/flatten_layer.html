@@ -1,30 +1,41 @@
 <!DOCTYPE HTML>
 <html>
+
 <head>
     <title>Flatten Layer</title>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <link rel="stylesheet" href="/assets/css/main.css"/>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="/assets/css/main.css" />
+    <link href="{{ url_for('assets', path='/styles.css') }}" rel="stylesheet">
 </head>
+
 <body>
 
-<!-- Header -->
-<header id="header" class="alt">
-    <div class="inner">
-        <h4> You've selected the Flatten Layer.</h4>
-        <p> The role of the Flatten Layer in Keras is super simple: </p>
-        <p> A flatten operation on a tensor reshapes the tensor to have the shape that is equal to the number of
-            elements
-            contained in tensor non including the batch dimension. </p>
-    </div>
-</header>
+    {% if not layer_id|int == 0 %}
+    <a href="/keview/v1alpha/layers/{{ layer_id|int -1 }}/display" class="previous">previous</a>
+    {% endif %}
+    {% if not max_layer_id|int == layer_id|int %}
+    <a href='/keview/v1alpha/layers/{{layer_id|int +1}}/display' class="next">next</a>
+    {% endif %}
+
+    <!-- Header -->
+    <header id="header" class="alt">
+        <div class="inner">
+            <h4> You've selected the Flatten Layer.</h4>
+            <p> The role of the Flatten Layer in Keras is super simple: </p>
+            <p> A flatten operation on a tensor reshapes the tensor to have the shape that is equal to the number of
+                elements
+                contained in tensor non including the batch dimension. </p>
+        </div>
+    </header>
 
 
-<!-- Scripts -->
-<script src="assets/js/jquery.min.js"></script>
-<script src="assets/js/skel.min.js"></script>
-<script src="assets/js/util.js"></script>
-<script src="assets/js/main.js"></script>
+    <!-- Scripts -->
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/skel.min.js"></script>
+    <script src="assets/js/util.js"></script>
+    <script src="assets/js/main.js"></script>
 
 </body>
+
 </html>

@@ -32,10 +32,7 @@ def test_get_components():
         assert res.status_code == 200
 
         res = requests.get(f"{API_URL}/layers/{layer_id}/components/0")
-        if layer_id == 6:
-            assert res.status_code == 404
-        else:
-            assert res.status_code == 200
+        assert res.status_code == 200
 
 
 def test_get_outputs():

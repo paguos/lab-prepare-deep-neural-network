@@ -1,41 +1,74 @@
 <!DOCTYPE HTML>
 <html>
+
 <head>
     <title>Dense Layer</title>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <link rel="stylesheet" href="/assets/css/main.css"/>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="/assets/css/main.css" />
+    <link href="{{ url_for('assets', path='/styles.css') }}" rel="stylesheet">
+    <link href="{{ url_for('assets', path='/templates') }}/dense_layer.css" rel="stylesheet">
 </head>
+
 <body>
 
-<!-- Header -->
-<header id="header" class="alt">
-    <div class="inner">
-        <h1>Dense-Layer</h1>
-        <h4> You've selected the Dense Layer.</h4>
-        <p> A dense layer is simply a layer where each unit or neuron is connected to each neuron in the next layer.</p>
-        <hr>
+    {% if not layer_id|int == 0 %}
+    <a href="/keview/v1alpha/layers/{{ layer_id|int -1 }}/display" class="previous">previous</a>
+    {% endif %}
+    {% if not max_layer_id|int == layer_id|int %}
+    <a href='/keview/v1alpha/layers/{{layer_id|int +1}}/display' class="next">next</a>
+    {% endif %}
+
+    <!-- Header -->
+    <header id="header" class="alt">
+        <div class="inner">
+            <h1>Dense-Layer</h1>
+            <h4> You've selected the Dense Layer.</h4>
+            <p> A dense layer is simply a layer where each unit or neuron is connected to each neuron in the next layer.
+            </p>
+            <hr>
+        </div>
+    </header>
+
+    <!-- Wrapper -->
+    <div id="wrapper">
+
+        <!-- Banner -->
+        <section id="intro" class="main">
+            <h4> Component </h4>
+            <p> Name: {{ component.name }} </p>
+            <p> Count: {{ component.count }} </p>
+            <hr>
+        </section>
+
     </div>
-</header>
 
-<!-- Wrapper -->
-<div id="wrapper">
+    <div id="outer-box">
+        <svg id="svg" width="100%" height="50vh" style="position:absolute; " stroke="black">
 
-    <!-- Banner -->
-    <section id="intro" class="main">
-        <h4> Component </h4>
-        <p> Name: {{ component.name }} </p>
-        <p> Count: {{ component.count }} </p>
-        <hr>
-    </section>
+        </svg>
 
-</div>
+        <div id="bias" style="position: absolute;
+    left: 50%;
+    transform: translate(-50%, 0%); top:50vh; background-color: grey;">
+            SUMME+BIAS=
+        </div>
+        <div class="inputNeuronBox" id="inputNeuronBox" onscroll="onScrollInput()"></div>
+        <div class="outputNeuronBox" id="outputNeuronBox" onscroll="onScrollOutput()"></div>
+    </div>
+    </div>
 
-<!-- Scripts -->
-<script src="assets/js/jquery.min.js"></script>
-<script src="assets/js/skel.min.js"></script>
-<script src="assets/js/util.js"></script>
-<script src="assets/js/main.js"></script>
+    <!-- Scripts -->
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/js/skel.min.js"></script>
+    <script src="assets/js/util.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script language="javascript" type="text/javascript"
+        src="{{ url_for('assets', path='/templates') }}/dense_layer.js"></script>
+    <script>
+        onload('{{ component.neuronalWeights | tojson }}', '{{component.neuronalInput | tojson}}')
+    </script>
 
 </body>
+
 </html>
