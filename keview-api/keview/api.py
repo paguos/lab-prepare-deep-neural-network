@@ -91,55 +91,6 @@ async def outputs(layer_id):
     return NumpyEncoder.encodeJSON(outputs)
 
 
-@app.get("/")
-async def home(request: Request):
-    template_data = {
-        "request": request
-    }
-    return templates.TemplateResponse("index.html", template_data)
-
-
-@app.get("/keview/v1alpha/layers/{layer_id}/display")
-async def display_layer(request: Request, layer_id: str):
-
-    layer = fetch_layer(keras_model, layer_id)
-    layer_name = inflection.underscore(type(layer).__name__)
-
-    componentsvar = layer.get_components()
-    template_data = {
-        "layer_id": layer_id,
-        "max_layer_id": len(keras_model.get_layers())-1,
-        "request": request,
-    }
-    if isinstance(layer, DenseLayer):
-
-        template_data["component"] = {
-
-            "name": type(componentsvar[0]).__name__,
-            "count": len(componentsvar),
-            "neuronalInput": await outputs(str(int(layer_id)-1)),
-            "neuronalWeights": await components(layer_id),
-        }
-    elif isinstance(layer, FlattenLayer):
-        pass
-    else:
-        images = MNIST.list_images(int(layer_id))
-        images_before = MNIST.list_images(int(layer_id)-1)
-        images.sort()
-        images_before.sort()
-        template_data["images"] = images
-        template_data["imagesBefore"] = images_before
-        template_data["component"] = {
-            "name": type(componentsvar[0]).__name__,
-            "count": len(componentsvar),
-            "neuronalWeights": await components(layer_id),
-        }
-    return templates.TemplateResponse(
-        f"{layer_name}.html",
-        template_data
-    )
-
-
 def invert(image):
     return image.point(lambda p: 255 - p)
 
@@ -181,7 +132,56 @@ async def saveimg(test_image: UploadFile = File(...)):
     }
 
 
-@app.get("/keview/v1alpha/run-draw/display")
+@app.get("/")
+async def home(request: Request):
+    template_data = {
+        "request": request
+    }
+    return templates.TemplateResponse("index.html", template_data)
+
+
+@app.get("/keview/layers/{layer_id}")
+async def display_layer(request: Request, layer_id: str):
+
+    layer = fetch_layer(keras_model, layer_id)
+    layer_name = inflection.underscore(type(layer).__name__)
+
+    componentsvar = layer.get_components()
+    template_data = {
+        "layer_id": layer_id,
+        "max_layer_id": len(keras_model.get_layers())-1,
+        "request": request,
+    }
+    if isinstance(layer, DenseLayer):
+
+        template_data["component"] = {
+
+            "name": type(componentsvar[0]).__name__,
+            "count": len(componentsvar),
+            "neuronalInput": await outputs(str(int(layer_id)-1)),
+            "neuronalWeights": await components(layer_id),
+        }
+    elif isinstance(layer, FlattenLayer):
+        pass
+    else:
+        images = MNIST.list_images(int(layer_id))
+        images_before = MNIST.list_images(int(layer_id)-1)
+        images.sort()
+        images_before.sort()
+        template_data["images"] = images
+        template_data["imagesBefore"] = images_before
+        template_data["component"] = {
+            "name": type(componentsvar[0]).__name__,
+            "count": len(componentsvar),
+            "neuronalWeights": await components(layer_id),
+        }
+    return templates.TemplateResponse(
+        f"{layer_name}.html",
+        template_data
+    )
+
+
+@app.get("/keview/run")
 async def run_draw(request: Request):
     return templates.TemplateResponse(
         "run_draw.html",
@@ -189,7 +189,7 @@ async def run_draw(request: Request):
     )
 
 
-@app.get("/keview/v1alpha/train-draw/display")
+@app.get("/keview/train")
 async def train_draw(request: Request):
     return templates.TemplateResponse(
         "train_draw.html",
