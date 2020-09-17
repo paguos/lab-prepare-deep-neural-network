@@ -1,48 +1,74 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE HTML>
+<html>
 
 <head>
-    <meta charset="UTF-8">
-    <title>Batch Normalization Layyer</title>
-    <link href="{{ url_for('assets', path='/styles.css') }}" rel="stylesheet">
-
+	<title>Batch Normalization Layer</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<link href="{{ url_for('assets', path='css/main.css') }}" rel="stylesheet">
+	<link href="{{ url_for('assets', path='css/styles.css') }}" rel="stylesheet">
 </head>
 
 <body>
-    {% if not layer_id|int == 0 %}
-    <a href="/keview/v1alpha/layers/{{ layer_id|int -1 }}/display" class="previous">previous</a> {% endif %} {% if not max_layer_id|int == layer_id|int %}
-    <a href='/keview/v1alpha/layers/{{layer_id|int +1}}/display' class="next">next</a> {% endif %}
-    <h1>Batch Normalization Layer</h1>
-    <h4> You've selected the Batch Normalization Layer.</h4>
-    <p> The basic idea behind batch normalization is to limit covariate shift by normalizing the activations of each layer (transforming the inputs to be mean 0 and unit variance). This, supposedly, allows each layer to learn on a more stable distribution
-        of inputs, and would thus accelerate the training of the network</p>
-    </p>
-    <div class="images_before" id="images_before">
+	{% if not layer_id|int == 0 %}
+	<a href="/keview/v1alpha/layers/{{ layer_id|int -1 }}/display" class="previous">previous</a>
+	{% endif %}
+	{% if not max_layer_id|int == layer_id|int %}
+	<a href='/keview/v1alpha/layers/{{layer_id|int +1}}/display' class="next">next</a>
+	{% endif %}
 
-        <h4> Images before:</h4>
-        {% for imgbef in imagesBefore %}
-        <img style="display: block;" src="{{ url_for('assets', path='/images') }}/{{ layer_id|int -1 }}/{{ imgbef }}" width="150" height="150"> {% endfor %}
-        <h4> Component </h4>
-        <p> Name: {{ component.name }} </p>
-        <p> Count: {{ component.count }} </p>
-    </div>
+	<!-- Header -->
+	<header id="header" class="alt">
+		<div class="inner">
+			<h1>Batch Normalization Layer</h1>
+			<h4> You've selected the Batch Normalization Layer.</h4>
+			<p> The basic idea behind batch normalization is to limit covariate shift by normalizing the activations of
+				each
+				layer (transforming the inputs to be mean 0 and unit variance). This, supposedly, allows each layer to
+				learn on
+				a more stable distribution of inputs, and would thus accelerate the training of the network</p>
+			<hr>
+		</div>
+	</header>
 
-    <div class="images_after" id="images_after">
-        <h4> Images after:</h4>
-        {% for img in images %}
+	<!-- Wrapper -->
+	<div id="wrapper">
 
-        <img style="display: block;" src="{{ url_for('assets', path='/images') }}/{{ layer_id }}/{{ img }}" onmouseover="updateInfo(this)" width="150" height="150"> {% endfor %}
+		<!-- Banner -->
+		<section id="intro" class="main">
+			<h4> Component </h4>
+			<p> Name: {{ component.name }} </p>
+			<p> Count: {{ component.count }} </p>
+			<hr>
+			<h4> Input Images:</h4>
+			<div id="images">
+				{% for imgbef in imagesBefore %}
+				<img src="{{ url_for('assets', path='/images') }}/{{ layer_id|int -1 }}/{{ imgbef }}" width="200"
+					height="200">
+				{% endfor %}
+			</div>
+			<hr>
+			<h4> Output Images:</h4>
+			<div id="images">
+				{% for img in images %}
+				<img src="{{ url_for('assets', path='/images') }}/{{ layer_id }}/{{ img }}" width="200" height="200"
+					onmouseover="updateInfo(this)">
+				{% endfor %}
+			</div>
+			<div id="container" style="text-align: left;"></div>
+		</section>
 
-    </div>
-    <div class="container" id="container" style="text-align: left;">
-    </div>
-    <div style="clear:both"></div>
+	</div>
+
+	<div style="clear:both"></div>
+
+	<!-- Scripts -->
+	<script language="javascript" type="text/javascript"
+		src="{{ url_for('assets', path='/js') }}/batch_normalization_layer.js"></script>
+	<script>
+		onload('{{ component.neuronalWeights | tojson }}')
+	</script>
 
 </body>
-
-<script language="javascript" type="text/javascript" src="{{ url_for('assets', path='/templates') }}/batch_normalization_layer.js"></script>
-<script>
-    onload('{{ component.neuronalWeights | tojson }}')
-</script>
 
 </html>

@@ -1,53 +1,78 @@
-<html lang="en">
+<!DOCTYPE HTML>
+<html>
 
 <head>
-    <meta charset="UTF-8">
     <title>Convolution Layer</title>
-    <link href="{{ url_for('assets', path='/styles.css') }}" rel="stylesheet">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="{{ url_for('assets', path='css/main.css') }}" rel="stylesheet">
+    <link href="{{ url_for('assets', path='css/styles.css') }}" rel="stylesheet">
 </head>
 
 <body>
     {% if not layer_id|int == 0 %}
-    <a href="/keview/v1alpha/layers/{{ layer_id|int -1 }}/display" class="previous">previous</a> {% endif %} {% if not max_layer_id|int == layer_id|int %}
-    <a href='/keview/v1alpha/layers/{{layer_id|int +1}}/display' class="next">next</a> {% endif %}
+    <a href="/keview/v1alpha/layers/{{ layer_id|int -1 }}/display" class="previous">previous</a>
+    {% endif %}
+    {% if not max_layer_id|int == layer_id|int %}
+    <a href='/keview/v1alpha/layers/{{layer_id|int +1}}/display' class="next">next</a>
+    {% endif %}
 
-    <h1>Convolution Layer</h1>
-    <h4> You've selected the Convolution Layer.</h4>
-    <p> A convolution is the simple application of a filter to an input that results in an activation. Repeated application of the same filter to an input results in a map of activations called a feature map, indicating the locations and strength of a detected
-        feature in an input, such as an image.</p>
-    <p>Read more <a href="https://machinelearningmastery.com/convolutional-layers-for-deep-learning-neural-networks/">here</a>
-    </p>
+    <!-- Header -->
+    <header id="header" class="alt">
+        <div class="inner">
+            <h1>Convolution Layer</h1>
+            <h4> You've selected the Convolution Layer.</h4>
+            <p> A convolution is the simple application of a filter to an input that results in an activation. Repeated
+                application of the same filter to an input results in a map of activations called a feature map,
+                indicating
+                the
+                locations and strength of a detected feature in an input, such as an image.</p>
+            <p>Read more <a
+                    href="https://machinelearningmastery.com/convolutional-layers-for-deep-learning-neural-networks/">here</a>
+            </p>
+            <hr>
+        </div>
+    </header>
 
-    <div class="images_before" id="images_before">
-        <h4> Images before:</h4>
-        {% for imgbef in imagesBefore %}
-        <img style="display: block;" src="{{ url_for('assets', path='/images') }}/{{ layer_id|int -1 }}/{{ imgbef }}" width="150" height="150"> {% endfor %}
-        <h4> Component </h4>
-        <p> Name: {{ component.name }} </p>
-        <p> Count: {{ component.count }} </p>
+    <!-- Wrapper -->
+    <div id="wrapper">
+
+        <!-- Banner -->
+        <section id="intro" class="main">
+            <h4> Component </h4>
+            <p> Name: {{ component.name }} </p>
+            <p> Count: {{ component.count }} </p>
+            <hr>
+            <h4> Input Image:</h4>
+            <div id="images">
+                {% for imgbef in imagesBefore %}
+                <img src="{{ url_for('assets', path='/images') }}/{{ layer_id|int -1 }}/{{ imgbef }}" width="200"
+                    height="200">
+                {% endfor %}
+            </div>
+            <hr>
+            <h4> Output Images:</h4>
+            <div id="images">
+                {% for img in images %}
+                <img src="{{ url_for('assets', path='/images') }}/{{ layer_id }}/{{ img }}" width="200" height="200"
+                    onmouseover="updateKernel(this)">
+                {% endfor %}
+            </div>
+            <div id="container">
+                <p id="kernel_bias">bias</p>
+            </div>
+        </section>
+
     </div>
 
-    <div class="images_after" id="images_after">
-        <h4> Images after:</h4>
-        {% for img in images %}
 
-        <img style="display: block;" src="{{ url_for('assets', path='/images') }}/{{ layer_id }}/{{ img }}" onmouseover="updateKernel(this)" width="150" height="150"> {% endfor %}
-
-    </div>
-    <div class="container" id="container">
-        <p id="kernel_bias">bias</p>
-    </div>
-    <div style="clear:both"></div>
-
+    <!-- Scripts -->
+    <script language="javascript" type="text/javascript"
+        src="{{ url_for('assets', path='/js') }}/convolution_layer.js"></script>
+    <script>
+        onload('{{ component.neuronalWeights | tojson }}')
+    </script>
 
 </body>
-
-
-
-
-<script language="javascript" type="text/javascript" src="{{ url_for('assets', path='/templates') }}/convolution_layer.js"></script>
-<script>
-    onload('{{ component.neuronalWeights | tojson }}')
-</script>
 
 </html>

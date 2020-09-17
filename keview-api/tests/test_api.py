@@ -6,6 +6,7 @@ HOST = "http://127.0.0.1"
 PORT = 8000
 ENDPOINT = "keview/v1alpha"
 API_URL = f"{HOST}:{PORT}/{ENDPOINT}"
+UI_URL = f"{HOST}:{PORT}"
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -43,5 +44,5 @@ def test_get_outputs():
 
 def test_display_layer():
     for layer_id in range(0, 9):
-        res = requests.get(f"{API_URL}/layers/{layer_id}/display")
+        res = requests.get(f"{UI_URL}/keview/layers/{layer_id}")
         assert res.status_code == 200

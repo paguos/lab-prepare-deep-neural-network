@@ -14,22 +14,20 @@ span {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    position: absolute;
 }
 
 .inputNeuronBox {
     border: 3px solid red;
     display: inline-block;
     height: 50vh;
+    width: 40%;
     overflow: scroll;
-    position: absolute;
 }
 
 .outputNeuronBox {
-    position: absolute;
     border: 3px solid red;
     display: inline-block;
     height: 50vh;
-    right: 0;
+    width: 40%;
     overflow: scroll;
 }

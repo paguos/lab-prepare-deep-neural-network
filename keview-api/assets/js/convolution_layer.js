@@ -5,14 +5,8 @@ table.id = "kernel_table"
 kernel_bias = document.getElementById("kernel_bias")
 
 function onload(neuronalWeightsStr) {
-
     neuronalWeights = JSON.parse(neuronalWeightsStr)
-
     setKernel(0)
-
-
-
-
 }
 
 function updateKernel(x) {

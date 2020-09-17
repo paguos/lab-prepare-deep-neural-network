@@ -1,22 +1,21 @@
+<!DOCTYPE HTML>
 <html>
 <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
 
-
 <head>
-    <link href="/assets/templates/run-draw.css" rel="stylesheet">
-
+    <link href="{{ url_for('assets', path='css/run-draw.css') }}" rel="stylesheet">
+    <link href="{{ url_for('assets', path='css/main.css') }}" rel="stylesheet">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0" />
 </head>
 
 <body onload="init()" style="margin: 0; height: 100%; overflow: hidden">
+
     <canvas id="can" width="400" height="400" style="border:2px solid; "></canvas>
-
     <div class="button_cont" align="center"><a class="example_c" onclick="save()" target="_blank">run</a></div>
-
     <div class="button_cont" align="center"><a class="example_c" onclick="erase()" target="_blank">clear</a></div>
     <div id="prediction"></div>
 
 </body>
-<script language="javascript" type="text/javascript" src="/assets/templates/run-draw.js"></script>
+<script language="javascript" type="text/javascript" src="{{ url_for('assets', path='/js') }}/run-draw.js"></script>
 
 </html>
