@@ -45,12 +45,13 @@ class MNIST:
         return test_images[image_index]
 
     @staticmethod
-    def save_images(model: KerasModel,input_img):
-        img_directory = f"assets/images/-1/"
+    def save_images(model: KerasModel, input_img):
+        img_directory = "assets/images/-1/"
         shutil.rmtree(img_directory, ignore_errors=True)
         Path(img_directory).mkdir(parents=True, exist_ok=True)
-        input_img=np.reshape(input_img*255, (28, 28))
-        plt.imsave(f"{img_directory}input_{str(time.time())}.png", Image.fromarray(input_img))
+        input_img = np.reshape(input_img*255, (28, 28))
+        plt.imsave(f"{img_directory}input_{str(time.time())}.png",
+                   Image.fromarray(input_img))
 
         layer_index = 0
 
@@ -70,7 +71,8 @@ class MNIST:
             for component in layer.get_components():
                 output = component.get_output()
                 plt.imsave(
-                    f"{img_directory}/{layer_name}_{comp_index}__{str(time.time())}.png", output)
+                    f"{img_directory}/{layer_name}_{comp_index}__{str(time.time())}.png", output
+                )
                 comp_index += 1
 
             layer_index += 1
