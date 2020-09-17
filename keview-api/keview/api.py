@@ -11,7 +11,6 @@ from fastapi import File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from fastapi.responses import FileResponse
 
 from keras.preprocessing.image import img_to_array
 from tensorflow.python import keras
@@ -93,12 +92,11 @@ async def outputs(layer_id):
 
 
 @app.get("/")
-async def display_layer(request: Request):
+async def home(request: Request):
     template_data = {
         "request": request
     }
     return templates.TemplateResponse("index.html", template_data)
-
 
 
 @app.get("/keview/v1alpha/layers/{layer_id}/display")
@@ -184,13 +182,19 @@ async def saveimg(test_image: UploadFile = File(...)):
 
 
 @app.get("/keview/v1alpha/run-draw/display")
-async def runDraw(request: Request):
-    return FileResponse("assets/templates/run-draw.html")
+async def run_draw(request: Request):
+    return templates.TemplateResponse(
+        "run_draw.html",
+        {"request": request}
+    )
 
 
 @app.get("/keview/v1alpha/train-draw/display")
-async def trainDraw(request: Request):
-    return FileResponse("assets/templates/train-draw.html")
+async def train_draw(request: Request):
+    return templates.TemplateResponse(
+        "train_draw.html",
+        {"request": request}
+    )
 
 
 def fetch_layer(model: KerasModel, layer_index):
