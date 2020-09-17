@@ -3,6 +3,9 @@
 
 <head>
     <title>Max Pooling Layer</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="/assets/css/main.css" />
     <link href="{{ url_for('assets', path='/styles.css') }}" rel="stylesheet">
 
 </head>
@@ -37,7 +40,6 @@
             <h4> Images:</h4>
             <div id="images">
                 {% for img in images %}
-
                 <img src="{{ url_for('assets', path='/images') }}/{{ layer_id }}/{{ img }}" width="200" height="200">
                 {% endfor %}
             </div>
@@ -54,10 +56,8 @@
         <h4> Images before:</h4>
         {% for imgbef in imagesBefore %}
         <img style="display: block;" src="{{ url_for('assets', path='/images') }}/{{ layer_id|int -1 }}/{{ imgbef }}"
-            width="150" height="150"> {% endfor %}
-        <h4> Component </h4>
-        <p> Name: {{ component.name }} </p>
-        <p> Count: {{ component.count }} </p>
+            width="150" height="150">
+        {% endfor %}
     </div>
 
     <div class="images_after" id="images_after">
@@ -65,18 +65,14 @@
         {% for img in images %}
 
         <img style="display: block;" src="{{ url_for('assets', path='/images') }}/{{ layer_id }}/{{ img }}" width="150"
-            height="150"> {% endfor %}
+            height="150">
+        {% endfor %}
 
-    </div>
-    <div class="container" id="container">
-    </div>
-    <div style="clear:both"></div>
-
-    <!-- Scripts -->
-    <script src="assets/js/jquery.min.js"></script>
-    <script src="assets/js/skel.min.js"></script>
-    <script src="assets/js/util.js"></script>
-    <script src="assets/js/main.js"></script>
+        <!-- Scripts -->
+        <script src="{{ url_for('assets', path='/js') }}/jquery.min.js"></script>
+        <script src="{{ url_for('assets', path='/js') }}/skel.min.js"></script>
+        <script src="{{ url_for('assets', path='/js') }}/util.js"></script>
+        <script src="{{ url_for('assets', path='/js') }}/main.js"></script>
 
 </body>
 
