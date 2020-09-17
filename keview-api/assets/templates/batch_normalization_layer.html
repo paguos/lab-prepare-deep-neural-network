@@ -36,47 +36,33 @@
 
 		<!-- Banner -->
 		<section id="intro" class="main">
-			<h4> Images:</h4>
-			<div id="images">
-				{% for img in images %}
-				<img src="{{ url_for('assets', path='/images') }}/{{ layer_id }}/{{ img }}" width="200" height="200">
-				{% endfor %}
-			</div>
-			<hr>
 			<h4> Component </h4>
 			<p> Name: {{ component.name }} </p>
 			<p> Count: {{ component.count }} </p>
+			<hr>
+			<h4> Input Images:</h4>
+			<div id="images">
+				{% for imgbef in imagesBefore %}
+				<img src="{{ url_for('assets', path='/images') }}/{{ layer_id|int -1 }}/{{ imgbef }}" width="200"
+					height="200">
+				{% endfor %}
+			</div>
+			<hr>
+			<h4> Output Images:</h4>
+			<div id="images">
+				{% for img in images %}
+				<img src="{{ url_for('assets', path='/images') }}/{{ layer_id }}/{{ img }}" width="200" height="200"
+					onmouseover="updateInfo(this)">
+				{% endfor %}
+			</div>
+			<div id="container" style="text-align: left;"></div>
 		</section>
 
 	</div>
-	<div class="images_before" id="images_before">
 
-		<h4> Images before:</h4>
-		{% for imgbef in imagesBefore %}
-		<img style="display: block;" src="{{ url_for('assets', path='/images') }}/{{ layer_id|int -1 }}/{{ imgbef }}"
-			width="150" height="150"> {% endfor %}
-		<h4> Component </h4>
-		<p> Name: {{ component.name }} </p>
-		<p> Count: {{ component.count }} </p>
-	</div>
-
-	<div class="images_after" id="images_after">
-		<h4> Images after:</h4>
-		{% for img in images %}
-
-		<img style="display: block;" src="{{ url_for('assets', path='/images') }}/{{ layer_id }}/{{ img }}"
-			onmouseover="updateInfo(this)" width="150" height="150"> {% endfor %}
-
-	</div>
-	<div class="container" id="container" style="text-align: left;">
-	</div>
 	<div style="clear:both"></div>
 
 	<!-- Scripts -->
-	<script src="assets/js/jquery.min.js"></script>
-	<script src="assets/js/skel.min.js"></script>
-	<script src="assets/js/util.js"></script>
-	<script src="assets/js/main.js"></script>
 	<script language="javascript" type="text/javascript"
 		src="{{ url_for('assets', path='/templates') }}/batch_normalization_layer.js"></script>
 	<script>
