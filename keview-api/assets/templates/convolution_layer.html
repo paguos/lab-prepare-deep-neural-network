@@ -46,8 +46,7 @@
             <h4> Input Image:</h4>
             <div id="images">
                 {% for imgbef in imagesBefore %}
-                <img style="display: block;"
-                    src="{{ url_for('assets', path='/images') }}/{{ layer_id|int -1 }}/{{ imgbef }}" width="200"
+                <img src="{{ url_for('assets', path='/images') }}/{{ layer_id|int -1 }}/{{ imgbef }}" width="200"
                     height="200">
                 {% endfor %}
             </div>
