@@ -60,6 +60,15 @@ async def layers():
     return {"layers": layers_data}
 
 
+
+@app.get("/keview/layers_overview")
+async def get_all_layers(request: Request):
+    return templates.TemplateResponse(
+        "layer_overview.html",
+        {"request": request}
+    )
+
+
 @app.get("/keview/v1alpha/layers/{layer_id}")
 async def layer(layer_id):
     layer = fetch_layer(keras_model, layer_id)
