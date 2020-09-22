@@ -1,0 +1,43 @@
+
+<!DOCTYPE HTML>
+<html>
+<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+
+<script src="assets/js/jquery.min.js"></script>
+<script src="assets/js/skel.min.js"></script>
+<script src="assets/js/util.js"></script>
+<script src="assets/js/main.js"></script>
+
+
+<head>
+    <link href="{{ url_for('assets', path='css/run-draw.css') }}" rel="stylesheet">
+    <link href="{{ url_for('assets', path='css/main.css') }}" rel="stylesheet">
+    <div id="wrapper">
+
+        <h2> See what happens in each layer of the Neural Network: </h2>
+        <ul class="actions">
+            <h4> Layer 0: <a href="http://127.0.0.1:8000/keview/layers/0">Convolutional Layer</a></h4>
+            <h4> Layer 1: <a href="http://127.0.0.1:8000/keview/layers/1">Batch Normalization Layer</a></h4>
+            <h4> Layer 2: <a href="http://127.0.0.1:8000/keview/layers/2">Max Pooling Layer</a></h4>
+            <h4> Layer 3: <a href="http://127.0.0.1:8000/keview/layers/3">Convolutional Layer</a></h4>
+            <h4> Layer 4: <a href="http://127.0.0.1:8000/keview/layers/4">Batch Normalization Layer</a></h4>
+            <h4> Layer 5: <a href="http://127.0.0.1:8000/keview/layers/5">Max Pooling Layer Layer</a></h4>
+            <h4> Layer 6: <a href="http://127.0.0.1:8000/keview/layers/6">Flatten Layer</a></h4>
+            <h4> Layer 7: <a href="http://127.0.0.1:8000/keview/layers/7">Dense Layer</a></h4>
+            <h4> Layer 8: <a href="http://127.0.0.1:8000/keview/layers/8">Dense Layer</a></h4>
+        </ul>
+
+        <br><br>
+            <a href="http://127.0.0.1:8000/" class="button big">Main Page</a>
+    </div>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+</head>
+
+
+<body onload="init()" style="margin: 0; height: 100%;">
+</body>
+<script language="javascript" type="text/javascript" src="{{ url_for('assets', path='/js') }}/run-draw.js"></script>
+</html>
+
+
+
