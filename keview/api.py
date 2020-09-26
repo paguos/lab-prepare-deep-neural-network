@@ -60,7 +60,6 @@ async def layers():
     return {"layers": layers_data}
 
 
-
 @app.get("/keview/layers_overview")
 async def get_all_layers(request: Request):
     return templates.TemplateResponse(
